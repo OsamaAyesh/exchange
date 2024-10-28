@@ -5,7 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class WidgetNotification extends StatelessWidget {
-  const WidgetNotification({super.key});
+  String title;
+  String subTitle;
+  String ? read;
+   WidgetNotification({super.key,required this.title,required this.subTitle,this.read});
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +19,18 @@ class WidgetNotification extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Container(
+              read ==null ?Container(
                 height: ScreenUtilNew.height(8),
                 width: ScreenUtilNew.width(8),
                 decoration: const BoxDecoration(
                   color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+              ):Container(
+                height: ScreenUtilNew.height(8),
+                width: ScreenUtilNew.width(8),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -29,7 +39,7 @@ class WidgetNotification extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "تم إضافة تحديث للتطبيق ",
+                    title,
                     style: GoogleFonts.cairo(
                       fontSize: 16.sp,
                       color: Colors.black,
@@ -39,7 +49,7 @@ class WidgetNotification extends StatelessWidget {
                   SizedBox(
                     width: ScreenUtilNew.width(250),
                     child: Text(
-                      "تم اضافة ميزة الاشعارات من قبل الادارة الى التطبيق الخاص بالشركة ",
+                      subTitle,
                       style: GoogleFonts.cairo(
                         fontSize: 10.sp,
                         color: Colors.black,

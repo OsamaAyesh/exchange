@@ -1,12 +1,15 @@
 import 'package:device_preview/device_preview.dart';
+import 'package:exchange/core/sevices/firebase/firebase_notification.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_file.dart';
 import 'package:provider/provider.dart';
-
+import 'package:intl/intl.dart';
+import 'package:intl/intl.dart'; // تأكد من استيراد المكتبة
 // import 'core/sevices/firebase/firebase_message.dart';
 import 'core/sevices/shared_pref_controller.dart';
 import 'exchange_app.dart';
@@ -21,10 +24,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  await SharedPrefController().initPreferences();
+  await Firebase.initializeApp();
+  await FirebaseNotifications().initNotifications();
+  // await initializeDateFormatting('en', 'EN'); // 'AR' is an example for Arabic in Algeria
   // final firebaseApi = FirebaseApi();
   // await firebaseApi.initNotifications();
   // await FirebaseApi().initNotifications();
+  // await initializeDateFormatting('ar', "ar.json"); // Initialize for Arabic
 
   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // قفل التوجيه على الوضع العمودي
@@ -35,22 +42,22 @@ void main() async {
   FastCachedImageConfig.init(
     clearCacheAfter: const Duration(days: 2), // مدة التخزين المؤقت
   );
-  await SharedPrefController().initPreferences();
 
   runApp(
-    DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => ControllerSelectedSource()),
-          ChangeNotifierProvider(
-            create: (context) => IsLoadingAddTransactionProvider(),
-          ),
-          ChangeNotifierProvider(create: (_) => ImagePathProviderController()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ControllerSelectedSource()),
+        ChangeNotifierProvider(
+          create: (context) => IsLoadingAddTransactionProvider(),
+        ),
+        ChangeNotifierProvider(create: (_) => ImagePathProviderController()),
 
-        ],
-        child: ExchangeApp(),
-      ),
+      ],
+      child: ExchangeApp(),
     ),
+    // DevicePreview(
+    //   enabled: !kReleaseMode,
+    //   builder: (context) =>
+    // ),
   );
 }

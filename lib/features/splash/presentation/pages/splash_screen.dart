@@ -29,7 +29,8 @@ class _SplashScreenState extends State<SplashScreen> {
       bool loggedIn =
           SharedPrefController().getValue<bool>(PrefKeys.loggedIn.name) ??
               false;
-      String route = loggedIn ? Routes.homeScreen : Routes.loginScreen;
+      String route =Routes.loginScreen;
+      // String route = loggedIn ? Routes.homeScreen : Routes.loginScreen;
       Navigator.pushReplacementNamed(context, route);
     });
   }
@@ -42,7 +43,6 @@ class _SplashScreenState extends State<SplashScreen> {
           GestureDetector(
             onTap: (){
               // Navigator.pushNamed(context, Routes.loginScreen);
-
             },
               child: Center(child: Image.asset(AssetsManger.logoApp,height: ScreenUtilNew.height(132),width: ScreenUtilNew.width(216),))),
           Padding(

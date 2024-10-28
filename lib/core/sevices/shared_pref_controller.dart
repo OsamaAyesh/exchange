@@ -13,7 +13,8 @@ enum PrefKeys {
   isActive,
   lastLoggedIn,
   lastLoggedOut,
-  token
+  token,
+  fcmToken
 }
 
 class SharedPrefController {
@@ -33,6 +34,7 @@ class SharedPrefController {
   //
   Future<void> save(DataEmployee dataEmployee) async {
     await _sharedPreferences.setBool(PrefKeys.loggedIn.name, true);
+    await _sharedPreferences.setString(PrefKeys.fcmToken.name, "334343434344");
     await _sharedPreferences.setInt(PrefKeys.idEmployee.name, dataEmployee.id);
     await _sharedPreferences.setString(PrefKeys.nameEmployee.name, dataEmployee.name);
     await _sharedPreferences.setString(PrefKeys.emailEmployee.name, dataEmployee.email);

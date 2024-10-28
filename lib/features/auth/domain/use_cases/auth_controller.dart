@@ -18,7 +18,8 @@ class LoginApiController with ApiHelper {
         body: {
           "email": email,
           "password": password,
-        },
+          "fcm_token":SharedPrefController().getValue(PrefKeys.fcmToken.name)
+        }
       );
 
       // Handle the response based on status code

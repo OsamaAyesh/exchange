@@ -5,19 +5,23 @@ import 'package:exchange/core/utils/app_strings.dart';
 import 'package:exchange/core/utils/assets_manger.dart';
 import 'package:exchange/core/utils/context_extension.dart';
 import 'package:exchange/core/utils/screen_util_new.dart';
+import 'package:exchange/features/home/attendance/presentation/pages/attendance_screen.dart';
 import 'package:exchange/features/home/bankTransfers/presentation/pages/add_transaction_new_screen.dart';
 import 'package:exchange/features/home/bankTransfers/presentation/pages/all_transactions_screen.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/pages/boxes_daily.dart';
 import 'package:exchange/features/home/notifications/presentation/pages/notification_screen.dart';
 import 'package:exchange/features/home/profile/presentation/pages/profile_screen.dart';
+import 'package:exchange/features/home/salary/presentation/pages/salary_screen.dart';
 import 'package:exchange/features/home/summaryProcess/presentation/pages/summary_process.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+
 import 'package:page_animation_transition/animations/bottom_to_top_transition.dart';
 import 'package:page_animation_transition/animations/left_to_right_transition.dart';
 import 'package:page_animation_transition/page_animation_transition.dart';
+import 'package:exchange/features/home/salary/presentation/pages/salary_screen.dart' show SingleChildScrollView;
 
 import 'access_speed_widget.dart';
 
@@ -26,14 +30,21 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // DateTime now = DateTime.now();
+    //
+    // String formattedDate = DateFormat.yMMMMEEEEd('ar').format(now);
+    //
+    // String period = DateFormat('a', 'ar').format(now); // 'a' تعطينا AM أو PM
+    //
+    // String greeting = (period == 'ص') ? 'صباح الخير' : 'مساء الخير';
+    // الحصول على التاريخ والوقت الحالي
     DateTime now = DateTime.now();
+    //
+    // // تنسيق التاريخ باللغة العربية
+    // String formattedDate = DateFormat.yMMMMEEEEd('ar').format(now);
 
-    String formattedDate = DateFormat.yMMMMEEEEd('ar').format(now);
-
-    String period = DateFormat('a', 'ar').format(now); // 'a' تعطينا AM أو PM
-
-    String greeting = (period == 'ص') ? 'صباح الخير' : 'مساء الخير';
-
+    // تحديد التحية بناءً على الساعة
+    String greeting = (now.hour < 12) ? 'صباح الخير' : 'مساء الخير';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -101,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                                 width: ScreenUtilNew.width(16),
                               ),
                               Text(
-                                formattedDate,
+                                "$now",
                                 style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 10.sp,
@@ -240,7 +251,7 @@ class HomeScreen extends StatelessWidget {
                     title: AppStrings.homeScreen10,
                     pathIcon: AssetsManger.person,
                     onTap: () {
-                      context.showSnackBar(message: "هذا القسم قيد التطوير",erorr: true);
+                      Navigator.of(context).push(PageAnimationTransition(page: const AttendanceScreen(), pageAnimationType: LeftToRightTransition()));
 
                     },
                   ),
@@ -248,7 +259,7 @@ class HomeScreen extends StatelessWidget {
                     title: AppStrings.homeScreen9,
                     pathIcon: AssetsManger.salaryIcon,
                     onTap: () {
-                      context.showSnackBar(message: "هذا القسم قيد التطوير",erorr: true);
+                      Navigator.of(context).push(PageAnimationTransition(page:  SalaryPage(), pageAnimationType: LeftToRightTransition()));
 
                     },
                   ),
@@ -286,11 +297,13 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-        
-        
+
+
           ],
         ),
       ),
     );
   }
 }
+
+
