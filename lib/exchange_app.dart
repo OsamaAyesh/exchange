@@ -12,7 +12,7 @@ class ExchangeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    ScreenUtilNew.init(context);
     return  ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,

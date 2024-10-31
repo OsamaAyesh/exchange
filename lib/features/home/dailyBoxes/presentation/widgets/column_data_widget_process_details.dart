@@ -6,9 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 class ColumnDataWidgetProcessDetails extends StatelessWidget {
   String title;
   String subTitle;
+  int maxLines;
 
   ColumnDataWidgetProcessDetails(
-      {super.key, required this.title, required this.subTitle});
+      {super.key, required this.title, required this.subTitle,required this.maxLines});
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +38,9 @@ class ColumnDataWidgetProcessDetails extends StatelessWidget {
             color: Colors.white,
           ),
           overflow: TextOverflow.ellipsis,
-          maxLines: 1,
+          maxLines: maxLines,
           textAlign: TextAlign.right,
+          textDirection: TextDirection.rtl,
         ),
       ],
     );

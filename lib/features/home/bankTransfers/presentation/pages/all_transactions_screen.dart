@@ -107,13 +107,6 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.filter_list_rounded,
-            color: AppColors.primaryColor,
-          ),
-        ),
         actions: [
           IconButton(
             onPressed: () {

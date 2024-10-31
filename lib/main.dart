@@ -15,7 +15,11 @@ import 'core/sevices/shared_pref_controller.dart';
 import 'exchange_app.dart';
 import 'features/home/bankTransfers/presentation/manager/image_path_provider_controller.dart';
 import 'features/home/bankTransfers/presentation/manager/is_loading_add_transaction_provider.dart';
+import 'features/home/dailyBoxes/presentation/manager/providers/commision_controller_in_update_screen_provider.dart';
 import 'features/home/dailyBoxes/presentation/manager/providers/controller_selected_sourse.dart';
+import 'features/home/dailyBoxes/presentation/manager/providers/is_loading_in_update_screen.dart';
+import 'features/home/dailyBoxes/presentation/manager/providers/name_service_controller.dart';
+import 'features/home/dailyBoxes/presentation/manager/providers/types_operation.dart';
 
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -51,7 +55,10 @@ void main() async {
           create: (context) => IsLoadingAddTransactionProvider(),
         ),
         ChangeNotifierProvider(create: (_) => ImagePathProviderController()),
-
+        ChangeNotifierProvider(create: (_)=>NameServiceController()),
+        ChangeNotifierProvider(create: (_)=>TypesOperationProvider()),
+        ChangeNotifierProvider(create: (_) => CommissionControllerInUpdateScreenProvider()),
+        ChangeNotifierProvider(create: (_)=>IsLoadingInUpdateScreen()),
       ],
       child: ExchangeApp(),
     ),

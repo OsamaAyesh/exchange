@@ -15,7 +15,7 @@ class DataSources {
   int? max;
   List<TypeOperation>? typeOperation;
 
-  DataSources();
+  DataSources({this.id, this.name, this.status,this.accountId,this.serviceId,this.commissionId,this.commissionName,this.commissionValue,this.commissionType,this.serviceName,this.limit,this.min,this.max,this.typeOperation});
 
   DataSources.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;  // تعيين قيمة افتراضية إذا كانت null

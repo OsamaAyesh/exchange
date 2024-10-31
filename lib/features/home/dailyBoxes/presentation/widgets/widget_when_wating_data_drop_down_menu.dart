@@ -34,7 +34,7 @@ class WidgetWhenWatingDataDropDownMenu extends StatelessWidget {
           child: Row(
             children: [
               Padding(
-                padding:EdgeInsets.only(left: ScreenUtilNew.width(16)),
+                padding:EdgeInsets.only(left: ScreenUtilNew.width(8)),
                 child: const Icon(Icons.keyboard_arrow_down,
                 color: AppColors.primaryColor,),
               ),

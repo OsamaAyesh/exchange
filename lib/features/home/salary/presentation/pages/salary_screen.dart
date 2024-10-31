@@ -130,7 +130,6 @@ class _SalaryPageState extends State<SalaryPage> {
                 _endDateTextValue.value; // تحويل التاريخ إلى نص
           }
         }
-
         // Function to build styled input containers
         Widget _buildInputField({
           required String labelText,

@@ -240,6 +240,7 @@
 //     );
 //   }
 // }
+
 import 'package:exchange/core/utils/app_colors.dart';
 import 'package:exchange/core/utils/screen_util_new.dart';
 import 'package:flutter/material.dart';
@@ -267,16 +268,26 @@ class DropDownSelectSource extends StatefulWidget {
 class _DropDownSelectSourceState extends State<DropDownSelectSource> {
   DataSources? selectedAccount;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // تعيين القيمة الابتدائية بناءً على القيمة المحددة
+  //   selectedAccount = widget.options.firstWhere(
+  //           (option) => option.id == widget.selectDefaultValue,
+  //       orElse: () =>  widget.options[0]); // أو أول خيار كمثال
+  //
+  // }
   @override
   void initState() {
     super.initState();
     // تعيين القيمة الابتدائية بناءً على القيمة المحددة
-    selectedAccount = widget.options.firstWhere(
+    selectedAccount = widget.options.isNotEmpty
+        ? widget.options.firstWhere(
             (option) => option.id == widget.selectDefaultValue,
-        orElse: () => widget.options[0]); // أو أول خيار كمثال
-
+        orElse: () => widget.options[0] // إعادة الخيار الأول كقيمة افتراضية
+    )
+        : null; // إذا كانت القائمة فارغة
   }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -297,7 +308,6 @@ class _DropDownSelectSourceState extends State<DropDownSelectSource> {
           textDirection: TextDirection.rtl,
           child: Container(
             height: ScreenUtilNew.height(52),
-
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             decoration: BoxDecoration(
               color: AppColors.primaryColor.withOpacity(0.08),

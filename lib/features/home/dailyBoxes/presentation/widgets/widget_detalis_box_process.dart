@@ -7,8 +7,29 @@ import '../../../../../core/utils/assets_manger.dart';
 import '../../../../../core/utils/screen_util_new.dart';
 import 'column_data_widget_process_details.dart';
 import 'cost_process_widget.dart';
+
 class WidgetDetailsBoxProcess extends StatelessWidget {
-  const WidgetDetailsBoxProcess({super.key});
+  String numberProcess;
+  String commission;
+  String typeProcess;
+  String serviceName;
+  String increaseAmount;
+  String source;
+  String amount;
+  String total;
+  String notes;
+
+  WidgetDetailsBoxProcess(
+      {super.key,
+      required this.numberProcess,
+      required this.commission,
+      required this.typeProcess,
+      required this.serviceName,
+      required this.increaseAmount,
+      required this.source,
+      required this.amount,
+      required this.total,
+      required this.notes});
 
   @override
   Widget build(BuildContext context) {
@@ -44,29 +65,28 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  SizedBox(height: ScreenUtilNew.height(8),),
+                  SizedBox(
+                    height: ScreenUtilNew.height(8),
+                  ),
                   Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
                             right: ScreenUtilNew.width(24),
                             top: ScreenUtilNew.height(8)),
-                        child:
-                        ColumnDataWidgetProcessDetails(
+                        child: ColumnDataWidgetProcessDetails(
                           title: AppStrings.detailsScreen4,
-                          subTitle: "19",
+                          subTitle: commission, maxLines: 1,
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(
                             right: ScreenUtilNew.width(8),
                             top: ScreenUtilNew.height(8)),
-                        child:
-                        ColumnDataWidgetProcessDetails(
+                        child: ColumnDataWidgetProcessDetails(
                           title: AppStrings.detailsScreen3,
-                          subTitle: "1209109210",
+                          subTitle: numberProcess, maxLines: 1,
                         ),
                       ),
                     ],
@@ -75,27 +95,24 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                     height: ScreenUtilNew.height(8),
                   ),
                   Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
                             right: ScreenUtilNew.width(24),
                             top: ScreenUtilNew.height(8)),
-                        child:
-                        ColumnDataWidgetProcessDetails(
+                        child: ColumnDataWidgetProcessDetails(
                           title: AppStrings.detailsScreen6,
-                          subTitle: "بنكي",
+                          subTitle: serviceName, maxLines: 1,
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(
                             right: ScreenUtilNew.width(8),
                             top: ScreenUtilNew.height(8)),
-                        child:
-                        ColumnDataWidgetProcessDetails(
+                        child: ColumnDataWidgetProcessDetails(
                           title: AppStrings.detailsScreen5,
-                          subTitle: "إيداع",
+                          subTitle: typeProcess, maxLines: 1,
                         ),
                       ),
                     ],
@@ -104,39 +121,39 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                     height: ScreenUtilNew.height(8),
                   ),
                   Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
                             right: ScreenUtilNew.width(24),
                             top: ScreenUtilNew.height(8)),
-                        child:
-                        ColumnDataWidgetProcessDetails(
+                        child: ColumnDataWidgetProcessDetails(
                           title: AppStrings.detailsScreen8,
-                          subTitle: "أحمد صالحة",
+                          subTitle: source, maxLines: 1,
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(
                             right: ScreenUtilNew.width(8),
                             top: ScreenUtilNew.height(8)),
-                        child:
-                        ColumnDataWidgetProcessDetails(
+                        child: ColumnDataWidgetProcessDetails(
                           title: AppStrings.detailsScreen7,
-                          subTitle: "20",
+                          subTitle: increaseAmount, maxLines: 1,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: ScreenUtilNew.height(8),),
-
+                  SizedBox(
+                    height: ScreenUtilNew.height(8),
+                  ),
                 ],
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  SizedBox(height: ScreenUtilNew.height(8),),
+                  SizedBox(
+                    height: ScreenUtilNew.height(8),
+                  ),
                   Padding(
                     padding: EdgeInsets.only(
                         top: ScreenUtilNew.height(8),
@@ -145,21 +162,18 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                       height: ScreenUtilNew.height(67),
                       width: ScreenUtilNew.width(155),
                       decoration: BoxDecoration(
-                        borderRadius:
-                        BorderRadius.circular(5.r),
+                        borderRadius: BorderRadius.circular(5.r),
                         color: Colors.white,
                       ),
                       child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Column(
                             children: [
-                              const Expanded(
-                                  child: SizedBox()),
+                              const Expanded(child: SizedBox()),
                               CostProcessWidget(
-                                title: "مبلغ العملية",
-                                subTitle: "1700",
+                                title: "مبلغ  المتبقي",
+                                subTitle: total,
                               ),
                               Expanded(child: SizedBox()),
                             ],
@@ -173,7 +187,7 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                               Expanded(child: SizedBox()),
                               CostProcessWidget(
                                 title: "مبلغ العملية",
-                                subTitle: "1700",
+                                subTitle: amount,
                               ),
                               Expanded(child: SizedBox()),
                             ],
@@ -185,11 +199,16 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                   SizedBox(
                     height: ScreenUtilNew.height(8),
                   ),
-                  ColumnDataWidgetProcessDetails(
-                    title: AppStrings.detailsScreen9,
-                    subTitle: "",
+                  SizedBox(
+                    width: ScreenUtilNew.width(130),
+                    child: ColumnDataWidgetProcessDetails(
+                      title: AppStrings.detailsScreen9,
+                      subTitle: notes, maxLines: 3,
+                    ),
                   ),
-                  SizedBox(height: ScreenUtilNew.height(8),),
+                  SizedBox(
+                    height: ScreenUtilNew.height(8),
+                  ),
                 ],
               ),
             ],

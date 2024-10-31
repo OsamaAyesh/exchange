@@ -1,26 +1,25 @@
+import 'dart:convert';
+
 import 'package:exchange/core/utils/context_extension.dart';
-import 'package:exchange/features/home/dailyBoxes/data/models/success_process_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:http/http.dart'as http;
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../../../../core/utils/assets_manger.dart';
 import '../../../../../core/utils/screen_util_new.dart';
-import '../../data/models/transaction_model_response.dart';
-
-class ApiControllerDailyFundTransaction {
-  String apiUrl = "https://stage.qudsoffice.com/api/v1/employee-api/daily-fund-transaction";
+import '../../data/models/show_transaction_model.dart';
+class UpdateController {
+  String apiUrl = "https://stage.qudsoffice.com/api/v1/employee-api/daily-fund-transaction/";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   // جلب التوكن من SharedPreferences
   Future<String?> _getToken() async {
     return _sharedPrefController.getValue(PrefKeys.token.name);
   }
-  Future<DailyFundTransactionResponse?> postProcess({
+  Future<DailyFundTransactionResponse?> updateProcess({
     required BuildContext context,
-    required int dailyFundId,
+    required int idProcess,
     required int sourceId,
     required int commissionId,
     required int serviceId,
@@ -32,6 +31,7 @@ class ApiControllerDailyFundTransaction {
     required String notes,
   }) async {
     String? token = await _getToken();
+    String url="$apiUrl$idProcess";
     if (token == null) {
       print('Token not found in SharedPreferences');
       return null;
@@ -39,7 +39,6 @@ class ApiControllerDailyFundTransaction {
 
     try {
       final Map<String, String> body = {
-        'daily_fund_id': dailyFundId.toString(),
         'source_id': sourceId.toString(),
         'commission_id': commissionId.toString(),
         'service_id': serviceId.toString(),
@@ -49,9 +48,10 @@ class ApiControllerDailyFundTransaction {
         'increase_amount': increaseAmount.toString(),
         'amount': amount.toString(),
         'notes': notes,
+        '_method':"put"
       };
 
-      var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+      var request = http.MultipartRequest('POST', Uri.parse(url));
       request.headers['Authorization'] = 'Bearer $token';
       request.headers['Content-Type'] = 'application/json';
       request.fields.addAll(body);
@@ -142,62 +142,3 @@ class ApiControllerDailyFundTransaction {
   }
 
 }
-// Future<DailyFundTransactionResponse?> postProcess({
-//   required BuildContext context,
-//   required int dailyFundId,
-//   required int sourceId,
-//   required int commissionId,
-//   required int serviceId,
-//   required int type,
-//   required double commission,
-//   required int commissionType,
-//   required double increaseAmount,
-//   required double amount,
-//   required String notes,
-// }) async {
-//   String? token = await _getToken();
-//   if (token == null) {
-//     print('Token not found in SharedPreferences');
-//     return null;
-//   }
-//
-//   try {
-//     final Map<String, String> body = {
-//       'daily_fund_id': dailyFundId.toString(),
-//       'source_id': sourceId.toString(),
-//       'commission_id': commissionId.toString(),
-//       'service_id': serviceId.toString(),
-//       'type': type.toString(),
-//       'commission': commission.toString(),
-//       'commission_type': "2",
-//       'increase_amount': increaseAmount.toString(),
-//       'amount': amount.toString(),
-//       'notes': notes,
-//     };
-//
-//     var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
-//     request.headers['Authorization'] = 'Bearer $token';
-//     request.headers['Content-Type'] = 'application/json';
-//     request.fields.addAll(body);
-//
-//     final response = await request.send();
-//
-//     // قراءة محتوى الاستجابة
-//     final responseData = await response.stream.bytesToString();
-//     final Map<String, dynamic> jsonResponse = json.decode(responseData);
-//     int status = jsonResponse['status'];
-//     if (response.statusCode == 200&&status==200) {
-//       // print('Response: $jsonResponse'); // طباعة محتوى الاستجابة
-//       // context.showSnackBar(message: "تمت عملية الإضافة بنجاح",erorr: false);
-//       return DailyFundTransactionResponse.fromJson(jsonResponse);
-//     } else {
-//       context.showSnackBar(message: 'Failed to post transaction: ${response.statusCode}, Response: $jsonResponse',erorr: true);
-//       print('Failed to post transaction: ${response.statusCode}, Response: $jsonResponse');
-//       return null; // إرجاع null عند الفشل
-//     }
-//   } catch (e) {
-//     // context.showSnackBar(message: 'Error occurred while posting transaction: $e',erorr: true);
-//     // print('Error occurred while posting transaction: $e');
-//     return null; // إرجاع null في حالة الخطأ
-//   }
-// }
