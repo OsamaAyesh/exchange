@@ -8,7 +8,8 @@ import '../../../../../core/utils/app_colors.dart';
 class CostProcessWidget extends StatelessWidget {
   String title;
   String subTitle;
-   CostProcessWidget({super.key,required this.title,required this.subTitle});
+  int status;
+   CostProcessWidget({super.key,required this.title,required this.subTitle,required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class CostProcessWidget extends StatelessWidget {
           title,
           style: GoogleFonts.cairo(
               fontWeight: FontWeight.w500,
-              color: AppColors.primaryColor,
+              color: status==2?AppColors.primaryColor:AppColors.secondaryColor,
               fontSize: 10.sp),
         ),
         SizedBox(height: ScreenUtilNew.height(8),),
@@ -26,7 +27,7 @@ class CostProcessWidget extends StatelessWidget {
           subTitle,
           style: GoogleFonts.cairo(
               fontWeight: FontWeight.bold,
-              color: AppColors.primaryColor,
+              color: status==2?AppColors.primaryColor:AppColors.secondaryColor,
               fontSize: 10.sp),
         ),
       ],

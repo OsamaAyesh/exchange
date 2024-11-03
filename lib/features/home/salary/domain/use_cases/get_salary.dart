@@ -1,5 +1,7 @@
+import 'package:exchange/features/home/salary/presentation/manager/summary_balance.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import '../../../../../core/sevices/shared_pref_controller.dart';
@@ -13,7 +15,7 @@ class GetSalary {
     return _sharedPrefController.getValue(PrefKeys.token.name);
   }
 
-  Future<List<DataSalary>?> fetchSalaries(int page, {String? startDate, String? endDate, String? search}) async {
+  Future<List<DataSalary>?> fetchSalaries(int page,BuildContext context ,{String? startDate, String? endDate, String? search}) async {
     String? token = await _getToken();
 
     if (token == null) {
@@ -41,6 +43,7 @@ class GetSalary {
 
       if (response.statusCode == 200) {
         var jsonData = json.decode(response.body);
+        Provider.of<SummaryBalance>(context,listen: false).newExtraBalanceData=ExtraSalary.fromJson(jsonData['data']['extra']);
         return _parseSalaries(jsonData['data']['items']);
       } else {
         print('Failed to load data: ${response.statusCode}');

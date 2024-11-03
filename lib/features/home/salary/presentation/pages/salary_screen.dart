@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../../../../../core/utils/assets_manger.dart';
 import '../../../../../core/utils/screen_util_new.dart';
 import '../../data/models/salary_model.dart';
 import '../../domain/use_cases/get_salary.dart';
+import '../manager/summary_balance.dart';
 import '../widgets/column_data_widget_process_details.dart';
 import 'dart:ui' as ui;
 
@@ -47,6 +49,7 @@ class _SalaryPageState extends State<SalaryPage> {
 
     List<DataSalary>? fetchedSalaries = await GetSalary().fetchSalaries(
       page,
+      context,
       startDate: startDate,
       endDate: endDate,
       search: search,
@@ -66,6 +69,7 @@ class _SalaryPageState extends State<SalaryPage> {
 
     List<DataSalary>? fetchedSalaries = await GetSalary().fetchSalaries(
       page,
+      context,
       startDate: startDate,
       endDate: endDate,
       search: search,
@@ -130,6 +134,7 @@ class _SalaryPageState extends State<SalaryPage> {
                 _endDateTextValue.value; // تحويل التاريخ إلى نص
           }
         }
+
         // Function to build styled input containers
         Widget _buildInputField({
           required String labelText,
@@ -175,6 +180,7 @@ class _SalaryPageState extends State<SalaryPage> {
             ),
           );
         }
+
         return AlertDialog(
           title: Center(
             child: Text(
@@ -198,7 +204,9 @@ class _SalaryPageState extends State<SalaryPage> {
                 },
                 textValueNotifier: _startDateTextValue,
               ),
-              SizedBox(height: ScreenUtilNew.height(16),),
+              SizedBox(
+                height: ScreenUtilNew.height(16),
+              ),
               // End Date Input Field
               _buildInputField(
                 labelText: "End Date",
@@ -208,7 +216,9 @@ class _SalaryPageState extends State<SalaryPage> {
                 },
                 textValueNotifier: _endDateTextValue,
               ),
-              SizedBox(height: ScreenUtilNew.height(16),),
+              SizedBox(
+                height: ScreenUtilNew.height(16),
+              ),
               // Search Input Field
               Container(
                 height: ScreenUtilNew.height(52),
@@ -220,8 +230,8 @@ class _SalaryPageState extends State<SalaryPage> {
                 child: TextField(
                   controller: _searchController,
                   textDirection: ui.TextDirection.rtl,
-                  decoration:  InputDecoration(
-                    hintTextDirection:  ui.TextDirection.rtl,
+                  decoration: InputDecoration(
+                    hintTextDirection: ui.TextDirection.rtl,
                     hintText: "البحث",
                     hintStyle: GoogleFonts.cairo(
                       fontWeight: FontWeight.w400,
@@ -257,19 +267,25 @@ class _SalaryPageState extends State<SalaryPage> {
                 );
                 Navigator.of(context).pop();
               },
-              child: Text("تطبيق",style: GoogleFonts.cairo(
-                fontSize: 16.sp,
-                color: AppColors.primaryColor,
-              ),),
+              child: Text(
+                "تطبيق",
+                style: GoogleFonts.cairo(
+                  fontSize: 16.sp,
+                  color: AppColors.primaryColor,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("إلغاء",style: GoogleFonts.cairo(
-                fontSize: 16.sp,
-                color: Colors.red,
-              ),),
+              child: Text(
+                "إلغاء",
+                style: GoogleFonts.cairo(
+                  fontSize: 16.sp,
+                  color: Colors.red,
+                ),
+              ),
             ),
           ],
         );
@@ -285,6 +301,7 @@ class _SalaryPageState extends State<SalaryPage> {
           SizedBox(
             height: ScreenUtilNew.height(48),
           ),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -333,6 +350,48 @@ class _SalaryPageState extends State<SalaryPage> {
                   ))
             ],
           ),
+          Consumer<SummaryBalance>(builder: (context, provider, child) {
+            return Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
+              child: Container(
+                height: ScreenUtilNew.height(90),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    color: AppColors.secondaryColor,
+                    borderRadius: BorderRadius.circular(5.r)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ColumnDataWidgetProcessDetails(
+                          title: "إجمالي الرصيد",
+                          subTitle: "${provider.extraSalary.totalBalance}",
+                          maxLines: 1,
+                        ),
+                        ColumnDataWidgetProcessDetails(
+                          title: "إجمالي الإيداع",
+                          subTitle: "${provider.extraSalary.totalDeposit}",
+                          maxLines: 1,
+                        ),
+                        ColumnDataWidgetProcessDetails(
+                          title: "إجمالي السحب",
+                          subTitle: "${provider.extraSalary.totalWithdraw}",
+                          maxLines: 1,
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          }),
+          SizedBox(
+            height: ScreenUtilNew.height(16),
+          ),
           Padding(
             padding: EdgeInsets.only(right: ScreenUtilNew.width(16)),
             child: Align(
@@ -358,151 +417,319 @@ class _SalaryPageState extends State<SalaryPage> {
                       backgroundColor: AppColors.secondaryColor,
                     ),
                   )
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.zero,
-                    itemCount: salaries.length + (isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == salaries.length) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                            backgroundColor: AppColors.secondaryColor,
+                : salaries.isEmpty
+                    ? Center(
+                        child: Text(
+                          "لا يوجد حركات مالية لعرضها",
+                          style: GoogleFonts.cairo(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.secondaryColor,
                           ),
-                        ); // إظهار مؤشر تحميل المزيد
-                      }
-                      final salary = salaries[index];
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: EdgeInsets.zero,
+                        itemCount: salaries.length + (isLoadingMore ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == salaries.length && isLoadingMore) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primaryColor,
+                                backgroundColor: AppColors.secondaryColor,
+                              ),
+                            ); // إظهار مؤشر تحميل المزيد
+                          }
+                          final salary = salaries[index];
 
-                      return Stack(children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: ScreenUtilNew.width(16),
-                              right: ScreenUtilNew.width(16),
-                              bottom: ScreenUtilNew.height(16)),
-                          child: Container(
-                            // height: ScreenUtilNew.height(122),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.r),
-                              color: AppColors.primaryColor,
-                            ),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: ScreenUtilNew.height(8),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: ScreenUtilNew.width(16)),
-                                  child: Container(
-                                    height: ScreenUtilNew.height(48),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(5.r)),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "الرصــــــــــــــيــــد",
-                                          style: GoogleFonts.cairo(
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.secondaryColor,
-                                          ),
-                                          maxLines: 1,
-                                          textAlign: TextAlign.right,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        SizedBox(
-                                          height: ScreenUtilNew.height(4),
-                                        ),
-                                        Text(
-                                          "${salary.balance}",
-                                          style: GoogleFonts.cairo(
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.secondaryColor,
-                                          ),
-                                          maxLines: 2,
-                                          textAlign: TextAlign.right,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
+                          return Stack(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: ScreenUtilNew.width(16),
+                                    right: ScreenUtilNew.width(16),
+                                    bottom: ScreenUtilNew.height(16)),
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.r),
+                                    color: AppColors.primaryColor,
                                   ),
-                                ),
-                                SizedBox(
-                                  height: ScreenUtilNew.height(8),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: ScreenUtilNew.width(16)),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                  child: Column(
                                     children: [
-                                      Column(
-                                        children: [
-                                          ColumnDataWidgetProcessDetails(
-                                            title: "الملاحظات",
-                                            subTitle: "${salary.notes}",
-                                            maxLines: 5,
-                                          ),
-                                        ],
+                                      SizedBox(
+                                        height: ScreenUtilNew.height(8),
                                       ),
-                                      Column(
-                                        children: [
-                                          ColumnDataWidgetProcessDetails(
-                                            title: "المبلغ",
-                                            subTitle: "${salary.amount}",
-                                            maxLines: 1,
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                ScreenUtilNew.width(16)),
+                                        child: Container(
+                                          height: ScreenUtilNew.height(48),
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(5.r)),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "الرصــــــــــــــيــــد",
+                                                style: GoogleFonts.cairo(
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  color:
+                                                      AppColors.secondaryColor,
+                                                ),
+                                                maxLines: 1,
+                                                textAlign: TextAlign.right,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              SizedBox(
+                                                height: ScreenUtilNew.height(4),
+                                              ),
+                                              Text(
+                                                "${salary.balance}",
+                                                style: GoogleFonts.cairo(
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      AppColors.secondaryColor,
+                                                ),
+                                                maxLines: 2,
+                                                textAlign: TextAlign.right,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
                                           ),
-                                          ColumnDataWidgetProcessDetails(
-                                            title: "التاريخ",
-                                            subTitle: "${salary.date}",
-                                            maxLines: 1,
-                                          ),
-                                        ],
+                                        ),
                                       ),
-                                      Column(
-                                        children: [
-                                          ColumnDataWidgetProcessDetails(
-                                            title: "النوع",
-                                            subTitle: "${salary.type}",
-                                            maxLines: 1,
-                                          ),
-                                          ColumnDataWidgetProcessDetails(
-                                            title: "وصف النوع",
-                                            subTitle:
-                                                "${salary.typeDescription}",
-                                            maxLines: 1,
-                                          ),
-                                        ],
+                                      SizedBox(
+                                        height: ScreenUtilNew.height(8),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                ScreenUtilNew.width(16)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                ColumnDataWidgetProcessDetails(
+                                                  title: "الملاحظات",
+                                                  subTitle: "${salary.notes}",
+                                                  maxLines: 5,
+                                                ),
+                                              ],
+                                            ),
+                                            Column(
+                                              children: [
+                                                ColumnDataWidgetProcessDetails(
+                                                  title: "المبلغ",
+                                                  subTitle: "${salary.amount}",
+                                                  maxLines: 1,
+                                                ),
+                                                ColumnDataWidgetProcessDetails(
+                                                  title: "التاريخ",
+                                                  subTitle: "${salary.date}",
+                                                  maxLines: 1,
+                                                ),
+                                              ],
+                                            ),
+                                            Column(
+                                              children: [
+                                                ColumnDataWidgetProcessDetails(
+                                                  title: "النوع",
+                                                  subTitle: "${salary.type}",
+                                                  maxLines: 1,
+                                                ),
+                                                ColumnDataWidgetProcessDetails(
+                                                  title: "وصف النوع",
+                                                  subTitle:
+                                                      "${salary.typeDescription}",
+                                                  maxLines: 1,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: ScreenUtilNew.height(8),
                                       ),
                                     ],
                                   ),
                                 ),
-                                SizedBox(
-                                  height: ScreenUtilNew.height(8),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Image.asset(
-                          AssetsManger.detailsWidgetBackground,
-                          height: ScreenUtilNew.height(57),
-                          width: ScreenUtilNew.width(61),
-                          fit: BoxFit.fill,
-                        ),
-                      ]);
-
-                    },
-                  ),
+                              ),
+                              Image.asset(
+                                AssetsManger.detailsWidgetBackground,
+                                height: ScreenUtilNew.height(57),
+                                width: ScreenUtilNew.width(61),
+                                fit: BoxFit.fill,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
           ),
+          // Expanded(
+          //   child: isLoading
+          //       ? const Center(
+          //           child: CircularProgressIndicator(
+          //             color: AppColors.primaryColor,
+          //             backgroundColor: AppColors.secondaryColor,
+          //           ),
+          //         )
+          //       : ListView.builder(
+          //           controller: _scrollController,
+          //           padding: EdgeInsets.zero,
+          //           itemCount: salaries.length + (isLoadingMore ? 1 : 0),
+          //           itemBuilder: (context, index) {
+          //             if (index == salaries.length) {
+          //               return const Center(
+          //                 child: CircularProgressIndicator(
+          //                   color: AppColors.primaryColor,
+          //                   backgroundColor: AppColors.secondaryColor,
+          //                 ),
+          //               ); // إظهار مؤشر تحميل المزيد
+          //             }
+          //             final salary = salaries[index];
+          //
+          //             return Stack(children: [
+          //               Padding(
+          //                 padding: EdgeInsets.only(
+          //                     left: ScreenUtilNew.width(16),
+          //                     right: ScreenUtilNew.width(16),
+          //                     bottom: ScreenUtilNew.height(16)),
+          //                 child: Container(
+          //                   // height: ScreenUtilNew.height(122),
+          //                   width: double.infinity,
+          //                   decoration: BoxDecoration(
+          //                     borderRadius: BorderRadius.circular(5.r),
+          //                     color: AppColors.primaryColor,
+          //                   ),
+          //                   child: Column(
+          //                     children: [
+          //                       SizedBox(
+          //                         height: ScreenUtilNew.height(8),
+          //                       ),
+          //                       Padding(
+          //                         padding: EdgeInsets.symmetric(
+          //                             horizontal: ScreenUtilNew.width(16)),
+          //                         child: Container(
+          //                           height: ScreenUtilNew.height(48),
+          //                           width: double.infinity,
+          //                           decoration: BoxDecoration(
+          //                               color: Colors.white,
+          //                               borderRadius:
+          //                                   BorderRadius.circular(5.r)),
+          //                           child: Column(
+          //                             crossAxisAlignment:
+          //                                 CrossAxisAlignment.center,
+          //                             children: [
+          //                               Text(
+          //                                 "الرصــــــــــــــيــــد",
+          //                                 style: GoogleFonts.cairo(
+          //                                   fontSize: 12.sp,
+          //                                   fontWeight: FontWeight.w600,
+          //                                   color: AppColors.secondaryColor,
+          //                                 ),
+          //                                 maxLines: 1,
+          //                                 textAlign: TextAlign.right,
+          //                                 overflow: TextOverflow.ellipsis,
+          //                               ),
+          //                               SizedBox(
+          //                                 height: ScreenUtilNew.height(4),
+          //                               ),
+          //                               Text(
+          //                                 "${salary.balance}",
+          //                                 style: GoogleFonts.cairo(
+          //                                   fontSize: 12.sp,
+          //                                   fontWeight: FontWeight.bold,
+          //                                   color: AppColors.secondaryColor,
+          //                                 ),
+          //                                 maxLines: 2,
+          //                                 textAlign: TextAlign.right,
+          //                                 overflow: TextOverflow.ellipsis,
+          //                               ),
+          //                             ],
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       SizedBox(
+          //                         height: ScreenUtilNew.height(8),
+          //                       ),
+          //                       Padding(
+          //                         padding: EdgeInsets.symmetric(
+          //                             horizontal: ScreenUtilNew.width(16)),
+          //                         child: Row(
+          //                           mainAxisAlignment:
+          //                               MainAxisAlignment.spaceBetween,
+          //                           children: [
+          //                             Column(
+          //                               children: [
+          //                                 ColumnDataWidgetProcessDetails(
+          //                                   title: "الملاحظات",
+          //                                   subTitle: "${salary.notes}",
+          //                                   maxLines: 5,
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Column(
+          //                               children: [
+          //                                 ColumnDataWidgetProcessDetails(
+          //                                   title: "المبلغ",
+          //                                   subTitle: "${salary.amount}",
+          //                                   maxLines: 1,
+          //                                 ),
+          //                                 ColumnDataWidgetProcessDetails(
+          //                                   title: "التاريخ",
+          //                                   subTitle: "${salary.date}",
+          //                                   maxLines: 1,
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Column(
+          //                               children: [
+          //                                 ColumnDataWidgetProcessDetails(
+          //                                   title: "النوع",
+          //                                   subTitle: "${salary.type}",
+          //                                   maxLines: 1,
+          //                                 ),
+          //                                 ColumnDataWidgetProcessDetails(
+          //                                   title: "وصف النوع",
+          //                                   subTitle:
+          //                                       "${salary.typeDescription}",
+          //                                   maxLines: 1,
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                       SizedBox(
+          //                         height: ScreenUtilNew.height(8),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ),
+          //               Image.asset(
+          //                 AssetsManger.detailsWidgetBackground,
+          //                 height: ScreenUtilNew.height(57),
+          //                 width: ScreenUtilNew.width(61),
+          //                 fit: BoxFit.fill,
+          //               ),
+          //             ]);
+          //
+          //           },
+          //         ),
+          // ),
         ],
       ),
     );

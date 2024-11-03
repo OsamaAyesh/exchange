@@ -113,6 +113,7 @@ class _UpdateProcessState extends State<UpdateProcess> {
     amountMoneyTextEditingController.text=widget.amount;
     sumAmountMoneyTextEditingController.text=widget.increaseAmount;
     amountAfterCalculateTextEditingController.text=widget.total;
+    notesTextEditingController.text=widget.notes;
     super.initState();
   }
   void _updateResult(String valueAmount, String valueSum, String valuePercent) {
@@ -203,7 +204,8 @@ class _UpdateProcessState extends State<UpdateProcess> {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.of(context).push(PageAnimationTransition(page: DetailsBoxScreen(idBox: widget.idBox, nameBox: widget.boxName), pageAnimationType: RotationAnimationTransition()));
+                Navigator.pop(context);
+                // Navigator.of(context).push(PageAnimationTransition(page: DetailsBoxScreen(idBox: widget.idBox, nameBox: widget.boxName), pageAnimationType: RotationAnimationTransition()));
               },
               icon: const Icon(Icons.arrow_forward))
         ],
@@ -783,8 +785,9 @@ class _UpdateProcessState extends State<UpdateProcess> {
                         amount2,
                         notesTextEditingController.text
                     );
-                    Future.delayed(Duration(milliseconds: 1300),(){
-                      Navigator.of(context).push(PageAnimationTransition(page: DetailsBoxScreen(idBox: widget.idBox, nameBox: widget.boxName), pageAnimationType: RotationAnimationTransition()));
+                    Future.delayed(Duration(milliseconds: 1400),(){
+                      // Navigator.pushReplacement(context, DetailsBoxScreen(idBox: idBox, nameBox: nameBox))
+                      // Navigator.of(context).push(PageAnimationTransition(page: DetailsBoxScreen(idBox: widget.idBox, nameBox: widget.boxName), pageAnimationType: RotationAnimationTransition()));
                     });
                   },
                   title: "تعديل البيانات");

@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart'as http;
+import 'package:provider/provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/attendance_model.dart';
+import '../../presentation/manager/data_extra_model_provider.dart';
 class AttendanceController {
   String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/get-attendance";
   final SharedPrefController _sharedPrefController = SharedPrefController();
@@ -12,7 +14,7 @@ class AttendanceController {
   Future<String?> _getToken() async {
     return _sharedPrefController.getValue(PrefKeys.token.name);
   }
-  Future<List<AttendanceModel>> fetchAttendance() async {
+  Future<List<AttendanceModel>> fetchAttendance(BuildContext context) async {
     String? token = await _getToken();
 
     if (token == null) {
@@ -30,13 +32,13 @@ class AttendanceController {
 
       if (response.statusCode == 200) {
         var jsonData = json.decode(response.body);
-
         // تحقق مما إذا كانت البيانات موجودة
         if (jsonData['data']['items'] != null) {
           List<dynamic> itemsJson = jsonData['data']['items'];
           List<AttendanceModel> items = itemsJson
               .map((item) => AttendanceModel.fromJson(item))
               .toList();
+          Provider.of<DataExtraModelProvider>(context,listen: false).newDtaAttendance=DataAttendanceExtra.fromJson(jsonData['data']['extra']);
 
           return items;
         } else {

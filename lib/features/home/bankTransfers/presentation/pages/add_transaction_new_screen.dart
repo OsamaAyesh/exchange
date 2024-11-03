@@ -18,6 +18,7 @@ import 'package:exchange/features/home/bankTransfers/presentation/widgets/widget
 
 import 'package:exchange/features/home/profile/presentation/widgets/elevated_button_custom_data_and_password_updated.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -54,27 +55,219 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
 
   final StoreTransferControllerApi _controller = StoreTransferControllerApi();
 
+  // Future<void> _pickAndShowImage(BuildContext context) async {
+  //   final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     // تحديث مسار الصورة المحددة في الـ Provider
+  //     Provider.of<ImagePathProviderController>(context, listen: false)
+  //         .imagePathSet = pickedFile.path; // احفظ مسار الصورة المحددة
+  //   }
+  // }
+  // Future<void> _compressAndSaveImage(String imagePath, BuildContext context) async {
+  //   // ضغط الصورة
+  //   final compressedImage = await FlutterImageCompress.compressWithFile(
+  //     imagePath,
+  //     quality: 20, // نسبة الجودة (من 0 إلى 100)
+  //   );
+  //
+  //   if (compressedImage != null) {
+  //     // حفظ الصورة المضغوطة في ملف جديد
+  //     final compressedFile = File('${Directory.systemTemp.path}/compressed_${imagePath.split('/').last}');
+  //     await compressedFile.writeAsBytes(compressedImage);
+  //
+  //     // تحديث مسار الصورة المحددة في الـ Provider
+  //     Provider.of<ImagePathProviderController>(context, listen: false)
+  //         .imagePathSet = compressedFile.path; // احفظ مسار الصورة المضغوطة
+  //   }
+  // }
+  // Future<void> _pickAndShowImage(BuildContext context) async {
+  //   // إظهار حوار لتحديد مصدر الصورة
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('اختر مصدر الصورة',
+  //           style: GoogleFonts.cairo(
+  //             fontWeight: FontWeight.w500,
+  //
+  //           ),
+  //         textAlign: TextAlign.right,
+  //         textDirection: ui.TextDirection.rtl,),
+  //         content: SingleChildScrollView(
+  //           child: ListBody(
+  //             children: <Widget>[
+  //               ListTile(
+  //                 leading: const Icon(Icons.camera),
+  //                 title: Text('التقاط صورة من الكاميرا',
+  //                   style: GoogleFonts.cairo(
+  //                     color: AppColors.secondaryColor,
+  //                     fontWeight: FontWeight.w400,
+  //                   ),
+  //                   textAlign: TextAlign.right,
+  //                   textDirection: ui.TextDirection.rtl,),
+  //                 onTap: () async {
+  //                   final pickedFile =
+  //                       await _picker.pickImage(source: ImageSource.camera);
+  //                   if (pickedFile != null) {
+  //                     // تحديث مسار الصورة المحددة في الـ Provider
+  //                     // Provider.of<ImagePathProviderController>(context,
+  //                     //             listen: false)
+  //                     //         .imagePathSet =
+  //                     //     pickedFile.path;
+  //                     _compressAndSaveImage(pickedFile.path,context);// احفظ مسار الصورة المحددة
+  //                   }
+  //                   Navigator.of(context).pop(); // إغلاق الحوار
+  //                 },
+  //               ),
+  //               ListTile(
+  //                 leading: Icon(Icons.image),
+  //                 title: Text(
+  //                   'اختيار صورة من المعرض',
+  //                   style: GoogleFonts.cairo(
+  //                     fontWeight: FontWeight.w400,
+  //                       color:   AppColors.secondaryColor
+  //
+  //                   ),
+  //                   textAlign: TextAlign.right,
+  //                   textDirection: ui.TextDirection.rtl,
+  //                 ),
+  //                 onTap: () async {
+  //                   // Navigator.of(context).pop(); // إغلاق الحوار
+  //                   final pickedFile =
+  //                       await _picker.pickImage(source: ImageSource.gallery);
+  //                   if (pickedFile != null) {
+  //                     // تحديث مسار الصورة المحددة في الـ Provider
+  //                     Provider.of<ImagePathProviderController>(context,
+  //                                 listen: false)
+  //                             .imagePathSet =
+  //                         pickedFile.path; // احفظ مسار الصورة المحددة
+  //                   }
+  //                   Navigator.of(context).pop(); // إغلاق الحوار
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Future<void> _pickAndShowImage(BuildContext context) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    // إظهار حوار لتحديد مصدر الصورة
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'اختر مصدر الصورة',
+            style: GoogleFonts.cairo(
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.right,
+            textDirection: ui.TextDirection.rtl,
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.camera),
+                  title: Text(
+                    'التقاط صورة من الكاميرا',
+                    style: GoogleFonts.cairo(
+                      color: AppColors.secondaryColor,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.right,
+                    textDirection: ui.TextDirection.rtl,
+                  ),
+                  onTap: ()async {
+                    final pickedFile =
+                    await _picker.pickImage(source: ImageSource.camera);
+                    if (pickedFile != null) {
+                      // ضغط الصورة بعد التقاطها
+                      final compressedImage = await FlutterImageCompress.compressWithFile(
+                        pickedFile.path, // استخدام مسار الصورة بدلاً من الاسم
+                        quality: 20, // نسبة الجودة (من 0 إلى 100)
+                      );
 
-    if (pickedFile != null) {
-      // تحديث مسار الصورة المحددة في الـ Provider
-      Provider.of<ImagePathProviderController>(context, listen: false)
-          .imagePathSet = pickedFile.path; // احفظ مسار الصورة المحددة
-    }
+                      // تأكد من أن الصورة المضغوطة ليست فارغة قبل التحديث
+                      if (compressedImage != null) {
+                        // حفظ الصورة المضغوطة في ملف جديد
+                        final compressedFile = File('${Directory.systemTemp.path}/compressed_${pickedFile.name}');
+                        await compressedFile.writeAsBytes(compressedImage);
+
+                        // تحديث مسار الصورة المحددة في الـ Provider
+                        Provider.of<ImagePathProviderController>(context, listen: false)
+                            .imagePathSet = compressedFile.path; // احفظ مسار الصورة المضغوطة
+                      }
+                    }
+                    Navigator.of(context).pop(); // إغلاق الحوار قبل اختيار الصورةس
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.image),
+                  title: Text(
+                    'اختيار صورة من المعرض',
+                    style: GoogleFonts.cairo(
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.secondaryColor,
+                    ),
+                    textAlign: TextAlign.right,
+                    textDirection: ui.TextDirection.rtl,
+                  ),
+                  onTap: () async {
+                    final pickedFile =
+                    await _picker.pickImage(source: ImageSource.gallery);
+                    if (pickedFile != null) {
+                      // ضغط الصورة بعد اختيارها من المعرض
+                      Provider.of<ImagePathProviderController>(context,
+                                        listen: false)
+                                    .imagePathSet =
+                                pickedFile.path;
+                    }
+                    Navigator.of(context).pop(); // إغلاق الحوار قبل اختيار الصورة
+
+
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
+// دالة لضغط الصورة وحفظها
+  Future<void> _compressAndSaveImage(String imagePath, BuildContext context) async {
+    // ضغط الصورة
+    final compressedImage = await FlutterImageCompress.compressWithFile(
+      imagePath,
+      quality: 20, // نسبة الجودة (من 0 إلى 100)
+    );
 
+    if (compressedImage != null) {
+      // حفظ الصورة المضغوطة في ملف جديد
+      final compressedFile = File('${Directory.systemTemp.path}/compressed_${imagePath.split('/').last}');
+      await compressedFile.writeAsBytes(compressedImage);
 
+      // تحديث مسار الصورة المحددة في الـ Provider
+      context.read<ImagePathProviderController>().imagePathSet = compressedFile.path; // احفظ مسار الصورة المضغوطة
+    }
+  }
   void submitTransaction(BuildContext context) async {
-    Provider.of<IsLoadingAddTransactionProvider>(context, listen: false).isLoadingSet = true;
+    Provider.of<IsLoadingAddTransactionProvider>(context, listen: false)
+        .isLoadingSet = true;
 
-    final imagePath = Provider.of<ImagePathProviderController>(context, listen: false).pathImageTransaction;
+    final imagePath =
+        Provider.of<ImagePathProviderController>(context, listen: false)
+            .pathImageTransaction;
     if (imagePath == null) {
       // إذا كان مسار الصورة فارغًا، يمكنك معالجة الخطأ هنا
       context.showSnackBar(message: "يرجى اختيار صورة.", erorr: true);
-      Provider.of<IsLoadingAddTransactionProvider>(context, listen: false).isLoadingSet = false;
+      Provider.of<IsLoadingAddTransactionProvider>(context, listen: false)
+          .isLoadingSet = false;
       return; // إنهاء الدالة
     }
 
@@ -91,7 +284,8 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
     );
 
     // إعادة تعيين حالة التحميل إلى false بعد الانتهاء من العملية
-    Provider.of<IsLoadingAddTransactionProvider>(context, listen: false).isLoadingSet = false;
+    Provider.of<IsLoadingAddTransactionProvider>(context, listen: false)
+        .isLoadingSet = false;
 
     if (response != null) {
       if (response['status'] == 200) {
@@ -113,14 +307,16 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
       }
     } else {
       // في حالة فشل الاتصال بالخادم
-      context.showSnackBar(message: "فشل في تقديم المعاملة. يرجى المحاولة مرة أخرى.", erorr: false);
+      context.showSnackBar(
+          message: "فشل في تقديم المعاملة. يرجى المحاولة مرة أخرى.",
+          erorr: false);
     }
   }
 
   //This Part Date
   DateTime? selectedDate;
   final ValueNotifier<String> _textValue =
-  ValueNotifier<String>("قم باختيار التاريخ");
+      ValueNotifier<String>("قم باختيار التاريخ");
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -136,6 +332,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
       print(_dateController);
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -144,6 +341,45 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
     super.initState();
   }
 
+  // Future<void> _pickAndShowImage(BuildContext context) async {
+  //   final ImagePicker _picker = ImagePicker();
+  //
+  //   // إظهار حوار لتحديد مصدر الصورة
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('اختر مصدر الصورة'),
+  //         content: SingleChildScrollView(
+  //           child: ListBody(
+  //             children: <Widget>[
+  //               ListTile(
+  //                 leading: Icon(Icons.camera),
+  //                 title: Text('التقاط صورة من الكاميرا'),
+  //                 onTap: () async {
+  //                   Navigator.of(context).pop(); // إغلاق الحوار
+  //                   final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+  //                   if (pickedFile != null) {
+  //                     // تحديث مسار الصورة المحددة في الـ Provider
+  //                     Provider.of<ImagePathProviderController>(context, listen: false)
+  //                         .imagePathSet = pickedFile.path;                     }
+  //                 },
+  //               ),
+  //               ListTile(
+  //                 leading: Icon(Icons.image),
+  //                 title: Text('اختيار صورة من المعرض'),
+  //                 onTap: () async {
+  //                   Navigator.of(context).pop(); // إغلاق الحوار
+  //                   _pickAndShowImage1(context);
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     // void _submit() async {
@@ -207,7 +443,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
               alignment: Alignment.topRight,
               child: Padding(
                 padding:
-                EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
+                    EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
                 child: Text(
                   AppStrings.addNewTransication2,
                   style: GoogleFonts.cairo(
@@ -223,7 +459,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
             ),
             Padding(
               padding:
-              EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
+                  EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
               child: TextFieldCusomizedBoxScreenWidget(
                 hintText: AppStrings.addNewTransication3,
                 width: double.infinity,
@@ -293,7 +529,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
             ),
             Padding(
               padding:
-              EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
+                  EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -365,7 +601,8 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                           selectedValueString: '',
                           onChanged: (selectedAccount) {
                             _userIdController.text = "${selectedAccount!.id}";
-                          }, defaultValueId: 0,
+                          },
+                          defaultValueId: 0,
                         );
                       }
                     },
@@ -395,7 +632,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
             ),
             Padding(
               padding:
-              EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
+                  EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
               child: GestureDetector(
                 onTap: () {
                   _selectDate(context);
@@ -420,7 +657,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                         alignment: Alignment.centerRight,
                         child: Padding(
                           padding:
-                          EdgeInsets.only(right: ScreenUtilNew.width(8)),
+                              EdgeInsets.only(right: ScreenUtilNew.width(8)),
                           child: ValueListenableBuilder<String>(
                             valueListenable: _textValue,
                             builder: (context, value, child) {
@@ -446,7 +683,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
             ),
             Padding(
               padding:
-              EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
+                  EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -465,16 +702,15 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                       } else {
                         List<CurrencyModel> options = snapshot.data!;
                         return DropDownWidgetTextFieldCurrency(
-                          width: ScreenUtilNew.width(160),
-                          options: options,
-                          textTitle: AppStrings.addNewTransication13,
-                          selectedValueString: '',
-                          onChanged: (selectedAccount) {
-                            _currencyController.text =
-                            selectedAccount!.currency!;
-                            print(_currencyController);
-                          }
-                        );
+                            width: ScreenUtilNew.width(160),
+                            options: options,
+                            textTitle: AppStrings.addNewTransication13,
+                            selectedValueString: '',
+                            onChanged: (selectedAccount) {
+                              _currencyController.text =
+                                  selectedAccount!.currency!;
+                              print(_currencyController);
+                            }, selectid: 1,);
                       }
                     },
                   ),
@@ -539,7 +775,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
             ),
             Padding(
               padding:
-              EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
+                  EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
               child: TextFieldCusomizedBoxScreenWidget(
                 hintText: "قم بكتابة ملاحظاتك.....",
                 width: double.infinity,
@@ -579,12 +815,12 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
             ),
             Padding(
               padding:
-              EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
+                  EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Consumer<ImagePathProviderController>(
-                    builder: (context,provider,child){
+                    builder: (context, provider, child) {
                       return GestureDetector(
                         onTap: () {
                           _settingModalBottomSheet(context);
@@ -646,17 +882,17 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
             ),
             Consumer<IsLoadingAddTransactionProvider>(
                 builder: (context, isLoadingProvider, child) {
-                  return isLoadingProvider.isLoading
-                      ? const CircularProgressIndicator(
-                    color: AppColors.primaryColor,
-                    backgroundColor: AppColors.secondaryColor,
-                  )
-                      : ElevatedButtonCustomDataAndPasswordUpdated(
+              return isLoadingProvider.isLoading
+                  ? const CircularProgressIndicator(
+                      color: AppColors.primaryColor,
+                      backgroundColor: AppColors.secondaryColor,
+                    )
+                  : ElevatedButtonCustomDataAndPasswordUpdated(
                       onTap: () {
                         submitTransaction(context);
                       },
                       title: AppStrings.addNewTransication20);
-                }),
+            }),
             SizedBox(
               height: ScreenUtilNew.height(12),
             ),
@@ -688,14 +924,17 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                   builder: (context, provider, child) {
                     return provider.pathImageTransaction != ""
                         ? Image.file(
-                      File(provider.pathImageTransaction!),
-                      width: ScreenUtilNew.width(340),
-                      fit: BoxFit.contain,
-                    )
-                        : Text('لم يتم اختيار صورة بعد',style: GoogleFonts.cairo(
-                      fontSize: 16.sp,
-                      color: AppColors.primaryColor,
-                    ),);
+                            File(provider.pathImageTransaction!),
+                            width: ScreenUtilNew.width(340),
+                            fit: BoxFit.contain,
+                          )
+                        : Text(
+                            'لم يتم اختيار صورة بعد',
+                            style: GoogleFonts.cairo(
+                              fontSize: 16.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                          );
                   },
                 ),
                 SizedBox(height: ScreenUtilNew.height(24)),
@@ -706,6 +945,4 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
       },
     );
   }
-
-
 }

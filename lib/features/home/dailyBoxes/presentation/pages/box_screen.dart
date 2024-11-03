@@ -4,11 +4,13 @@ import 'package:exchange/core/utils/screen_util_new.dart';
 import 'package:exchange/features/home/dailyBoxes/data/models/box.dart';
 import 'package:exchange/features/home/dailyBoxes/domain/use_cases/box_controller.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/manager/providers/controller_selected_sourse.dart';
+import 'package:exchange/features/home/dailyBoxes/presentation/manager/providers/fill_color_commision_controller_provider.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/manager/providers/name_service_controller.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/pages/confirm_process.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/pages/details_box_screen.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/widgets/box_widget.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/widgets/container_scan_qr.dart';
+import 'package:exchange/features/home/dailyBoxes/presentation/widgets/text_field_cusomized_box_screen_widget.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/widgets/widget_when_wating_data_drop_down_menu.dart';
 import 'package:exchange/features/home/profile/presentation/widgets/elevated_button_custom_data_and_password_updated.dart';
 import 'package:flutter/material.dart';
@@ -30,10 +32,12 @@ import '../../domain/use_cases/get_sources.dart';
 import '../../domain/use_cases/get_sourse_one.dart';
 import '../../domain/use_cases/setting_controller.dart';
 import '../../domain/use_cases/transaction_controller_store.dart';
+import '../manager/providers/commision_controller_in_update_screen_provider.dart';
+import '../manager/providers/enabled_text_fileds_or_not_provider.dart';
 import '../manager/providers/types_operation.dart';
 import '../widgets/drop_down_select_source.dart';
 import '../widgets/drop_down_widget_text_field.dart';
-import '../widgets/text_field_cusomized_box_screen_widget.dart';
+// import '../widgets/text_field_cusomized_box_screen_widget.dart';
 
 class BoxScreen extends StatefulWidget {
   int idBox;
@@ -47,7 +51,7 @@ class BoxScreen extends StatefulWidget {
 
 class _BoxScreenState extends State<BoxScreen> {
   PageController pageController = PageController(
-    initialPage: 0,
+    initialPage: 1,
   );
 
   List detailsBox = [
@@ -156,7 +160,7 @@ class _BoxScreenState extends State<BoxScreen> {
       serviceId: serviceId1,
       type: type1,
       commission: commission1,
-      commissionType: 2,
+      commissionType: 1,
       increaseAmount: increaseAmount1,
       amount: amount1,
       notes: notes1,
@@ -225,6 +229,10 @@ class _BoxScreenState extends State<BoxScreen> {
   void initState() {
     super.initState();
     idBoxSelected = widget.idBox;
+    increaseAmountController.text="0";
+    commissionController.text="0";
+    Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=false;
+    Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=const Color(0XFFDCD9D9);
     _fetchSettingsData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TypesOperationProvider>(context, listen: false)
@@ -396,7 +404,7 @@ class _BoxScreenState extends State<BoxScreen> {
                     styleHintText: GoogleFonts.cairo(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.primaryColor),
+                        color: Colors.black),
                   ),
                 ),
                 Padding(
@@ -456,16 +464,15 @@ class _BoxScreenState extends State<BoxScreen> {
                             SizedBox(height: ScreenUtilNew.height(8)),
                             GestureDetector(
                               onTap: () {
-                                context.showSnackBar(
-                                    message: "لا يمكن تغيير إسم الخدمة",
-                                    erorr: true);
+                                // context.showSnackBar(
+                                //     message: "لا يمكن تغيير إسم الخدمة",
+                                //     erorr: true);
                               },
                               child: Container(
                                 height: ScreenUtilNew.height(52),
                                 width: ScreenUtilNew.width(160),
                                 decoration: BoxDecoration(
-                                    color: AppColors.primaryColor
-                                        .withOpacity(0.08),
+                                    color: Color(0XFFDCD9D9),
                                     borderRadius: BorderRadius.circular(5.r)),
                                 child: Row(
                                   children: [
@@ -474,7 +481,7 @@ class _BoxScreenState extends State<BoxScreen> {
                                           left: ScreenUtilNew.width(8)),
                                       child: const Icon(
                                         Icons.keyboard_arrow_down,
-                                        color: AppColors.primaryColor,
+                                        color: Colors.black,
                                       ),
                                     ),
                                     const Expanded(child: SizedBox()),
@@ -483,7 +490,7 @@ class _BoxScreenState extends State<BoxScreen> {
                                       style: GoogleFonts.cairo(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w400,
-                                        color: AppColors.primaryColor,
+                                        color: Colors.black,
                                       ),
                                     ),
                                     SizedBox(
@@ -524,6 +531,12 @@ class _BoxScreenState extends State<BoxScreen> {
                                   textTitle: "المصدر أو المستفيد",
                                   selectedValueString: "",
                                   onChanged: (selectedAccount) {
+                                    print(selectedAccount!.commissionValue);
+                                    if(selectedAccount.commissionValue==0||selectedAccount.commissionValue=="") {
+                                      Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=false;
+                                    }else{
+                                      Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=true;
+                                    }
                                     _updateResult(
                                         amountController.text,
                                         increaseAmountController.text,
@@ -547,6 +560,24 @@ class _BoxScreenState extends State<BoxScreen> {
                                         selectedAccount.commissionValue == ""
                                             ? "0"
                                             : selectedAccount.commissionValue!;
+                                    Provider.of<
+                                        CommissionControllerInUpdateScreenProvider>(
+                                        context,
+                                        listen: false)
+                                        .newCommission=commissionController.text;
+                                    double? testColor=double.tryParse(commissionController.text);
+                                    print(testColor);
+                                    if(testColor==0||testColor==null){
+                                      Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=Color(0XFFDCD9D9);
+                                    }else{
+                                      Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=AppColors.primaryColor.withOpacity(0.08);
+
+                                    }
+                                    Provider.of<
+                                        CommissionControllerInUpdateScreenProvider>(
+                                        context,
+                                        listen: false)
+                                        .commission;
                                     _updateResult(
                                         amountController.text,
                                         increaseAmountController.text,
@@ -614,7 +645,7 @@ class _BoxScreenState extends State<BoxScreen> {
                             styleHintText: GoogleFonts.cairo(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.primaryColor),
+                                color: Colors.black),
                           ),
                         ],
                       ),
@@ -632,46 +663,48 @@ class _BoxScreenState extends State<BoxScreen> {
                           SizedBox(
                             height: ScreenUtilNew.height(8),
                           ),
-                          TextFieldCusomizedBoxScreenWidget(
-                            textInputType: TextInputType.number,
-                            hintText: "0.0",
-                            iconData: Icons.percent_rounded,
-                            textEditingController: commissionController,
-                            textFiledDiscount: true,
-                            width: ScreenUtilNew.width(160),
-                            minLines: 1,
-                            maxLines: 2,
-                            onChanged: (value) {
-                              double? value1 = double.tryParse(value);
-                              double? valueLimit =
-                                  double.tryParse(commissionLimit);
-                              if (value1! <= valueLimit!) {
+                          Consumer2<FillColorCommissionControllerProvider,EnabledTextFiledsOrNotProvider>(builder: (context,provider,provider2,child){
+                            return TextFieldCusomizedBoxScreenWidget(
+                              textInputType: TextInputType.number,
+                              hintText: "0.0",
+                              iconData: Icons.percent_rounded,
+                              textEditingController: commissionController,
+                              textFiledDiscount: true,
+                              width: ScreenUtilNew.width(160),
+                              minLines: 1,
+                              maxLines: 2,
+                              onChanged: (value) {
+                                double? value1 = double.tryParse(value);
+                                double? valueLimit =
+                                double.tryParse(commissionLimit);
+                                if (value1! <= valueLimit!) {
+                                  _updateResult(
+                                      amountController.text,
+                                      increaseAmountController.text,
+                                      commissionController.text);
+                                } else {
+                                  setState(() {
+                                    commissionController.text = commissionLimit;
+                                    context.showSnackBar(
+                                        message:
+                                        "لا يمكن أن تكون العمولة أعلى من $commissionLimit",
+                                        erorr: true);
+                                  });
+                                }
                                 _updateResult(
                                     amountController.text,
                                     increaseAmountController.text,
                                     commissionController.text);
-                              } else {
-                                setState(() {
-                                  commissionController.text = commissionLimit;
-                                  context.showSnackBar(
-                                      message:
-                                          "لا يمكن أن تكون العمولة أعلى من $commissionLimit",
-                                      erorr: true);
-                                });
-                              }
-                              _updateResult(
-                                  amountController.text,
-                                  increaseAmountController.text,
-                                  commissionController.text);
-                            },
-                            enabled: true,
-                            filledColor:
-                                AppColors.primaryColor.withOpacity(0.08),
-                            styleHintText: GoogleFonts.cairo(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.primaryColor),
-                          ),
+                              },
+                              enabled: provider2.enabledOrNot,
+                              filledColor: provider.colorCommission,
+                              styleHintText: GoogleFonts.cairo(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black),
+
+                            );
+                          })
                         ],
                       ),
                     ],
@@ -754,7 +787,7 @@ class _BoxScreenState extends State<BoxScreen> {
                             styleHintText: GoogleFonts.cairo(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.primaryColor),
+                                color: Colors.black),
                           ),
                         ],
                       ),
@@ -804,11 +837,49 @@ class _BoxScreenState extends State<BoxScreen> {
                                 groupValue: provider.selectedId,
                                 onChanged: (value) {
                                   // typeId=va;
-                                  typeId = int.tryParse("${typeOperation.id}")!;
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((_) {
-                                    provider.changeSelectedId(value!);
-                                  });
+                                  // typeId=va;
+                                  typeId =
+                                  int.tryParse("${typeOperation.id}")!;
+                                  // typeId = int.tryParse("${typeOperation.id}")!;
+                                  if (typeOperation.id == "2" ||
+                                      typeOperation.id == "3") {
+                                    commissionController.text = "0.0";
+                                      Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=false;
+                                    Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=const Color(0XFFDCD9D9);
+                                    _updateResult(
+                                        amountController.text,
+                                        increaseAmountController
+                                            .text,
+                                        commissionController.text);
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      provider.changeSelectedId(value!);
+                                    });
+                                  } else  {
+                                    Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=true;
+                                    Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=AppColors.primaryColor.withOpacity(0.08);
+                                    commissionController
+                                        .text = Provider.of<
+                                        CommissionControllerInUpdateScreenProvider>(
+                                        context,
+                                        listen: false)
+                                        .commission;
+                                    _updateResult(
+                                        amountController.text,
+                                        increaseAmountController
+                                            .text,
+                                        commissionController.text);
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      provider.changeSelectedId(value!);
+                                    });
+                                  }
+
+                                  // typeId = int.tryParse("${typeOperation.id}")!;
+                                  // WidgetsBinding.instance
+                                  //     .addPostFrameCallback((_) {
+                                  //   provider.changeSelectedId(value!);
+                                  // });
                                   // print(provider.selectedId);
                                 },
                                 visualDensity: VisualDensity
@@ -857,7 +928,7 @@ class _BoxScreenState extends State<BoxScreen> {
                       styleHintText: GoogleFonts.cairo(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor),
+                          color: Colors.black),
                       textInputType: TextInputType.text),
                 ),
                 SizedBox(
@@ -898,12 +969,17 @@ class _BoxScreenState extends State<BoxScreen> {
                                     typeId,
                                     //type
                                     // commisstion2,
-                                    commisstion3,
+                                    commisstion2,
                                     increase2,
                                     amount2,
                                     notesController.text,
                                   );
                                 }
+                                setState(() {
+                                  increaseAmountController.clear();
+                                  amountController.clear();
+                                  amountAfterController.clear();
+                                });
 
                               },
                         title: "حفظ البيانات"),

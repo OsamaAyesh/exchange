@@ -57,7 +57,7 @@ class TextFieldCusomizedBoxScreenWidget extends StatelessWidget {
           minLines: minLines,
           textDirection: TextDirection.rtl,
           decoration: InputDecoration(
-            prefixIcon: textFiledDiscount ? Icon(iconData,color: AppColors.primaryColor,) : null,
+            prefixIcon: textFiledDiscount ? Icon(iconData,color: Colors.black,) : null,
             hintTextDirection: TextDirection.rtl,
             hintText: hintText,
             hintStyle:styleHintText,

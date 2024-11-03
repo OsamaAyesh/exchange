@@ -12,12 +12,14 @@ class DropDownWidgetTextFieldCurrency extends StatefulWidget {
   final ValueChanged<CurrencyModel?> onChanged; // تغيير نوع callback
   final String selectedValueString;
   final double width;
-  const DropDownWidgetTextFieldCurrency({   super.key,
+  int selectid;
+   DropDownWidgetTextFieldCurrency({   super.key,
     required this.textTitle,
     required this.options,
     required this.onChanged,
     required this.selectedValueString,
     required this.width,
+    required this.selectid
 });
 
   @override
@@ -32,10 +34,18 @@ class _DropDownWidgetTextFieldCurrencyState extends State<DropDownWidgetTextFiel
     super.initState();
 
     // تعيين القيمة الابتدائية بناءً على القيمة المحددة
+    // selectedAccount = widget.options.firstWhere(
+    //       (option) => option.name == widget.selectedValueString,
+    //   orElse: () => widget.options[0],
+    // );
     selectedAccount = widget.options.firstWhere(
-          (option) => option.name == widget.selectedValueString,
+          (option) => option.currency != null && option.currency!.contains(widget.selectedValueString),
       orElse: () => widget.options[0],
     );
+    for (var option in widget.options) {
+      print(option.currency); // للتحقق من القيم الفعلية لـ option.name
+    }
+
   }
 
 

@@ -1,8 +1,10 @@
 import 'package:exchange/features/home/attendance/data/models/attendance_model.dart';
+import 'package:exchange/features/home/attendance/presentation/manager/data_extra_model_provider.dart';
 import 'package:exchange/features/home/attendance/presentation/widgets/column_data_widget_process_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/assets_manger.dart';
@@ -46,6 +48,33 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         ),
         body: Column(
           children: [
+            // FutureBuilder(future: , builder: builder),
+            Consumer<DataExtraModelProvider>(builder: (context,provider,child){
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: ScreenUtilNew.width(16)),
+                child: Container(
+                  height: ScreenUtilNew.height(90),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      color: AppColors.secondaryColor,
+                      borderRadius: BorderRadius.circular(5.r)
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ColumnDataWidgetProcessDetails(title: "أيام الغياب", subTitle: "${provider.dataAttendanceExtra.absenceDays}"),
+                          ColumnDataWidgetProcessDetails(title: "أيام الحضور", subTitle: "${provider.dataAttendanceExtra.attendanceDays}")
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              );
+            }),
             Padding(
               padding: EdgeInsets.only(right: ScreenUtilNew.width(16)),
               child: Align(
@@ -63,7 +92,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               height: ScreenUtilNew.height(16),
             ),
             FutureBuilder<List<AttendanceModel>>(
-                future: AttendanceController().fetchAttendance(),
+                future: AttendanceController().fetchAttendance(context),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Expanded(
@@ -127,25 +156,25 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                           ),
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
+                                            MainAxisAlignment.spaceEvenly,
                                             children: [
                                               Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                                 children: [
                                                   ColumnDataWidgetProcessDetails(
                                                       title: "تاريخ الحضور",
                                                       subTitle:
-                                                          "${data[index].attendanceDate}"),
+                                                      "${data[index].attendanceDate}"),
                                                   SizedBox(
                                                     height:
-                                                        ScreenUtilNew.height(
-                                                            16),
+                                                    ScreenUtilNew.height(
+                                                        16),
                                                   ),
                                                   ColumnDataWidgetProcessDetails(
                                                       title: "تاريخ المغادرة",
                                                       subTitle:
-                                                          "${data[index].leaveDate}"),
+                                                      "${data[index].leaveDate}"),
                                                 ],
                                               ),
                                               VerticalDivider(
@@ -156,21 +185,21 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                               ),
                                               Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                                 children: [
                                                   ColumnDataWidgetProcessDetails(
                                                       title: "وقت الحضور",
                                                       subTitle:
-                                                          "${data[index].attendanceTime}"),
+                                                      "${data[index].attendanceTime}"),
                                                   SizedBox(
                                                     height:
-                                                        ScreenUtilNew.height(
-                                                            16),
+                                                    ScreenUtilNew.height(
+                                                        16),
                                                   ),
                                                   ColumnDataWidgetProcessDetails(
                                                       title: "وقت المغادرة",
                                                       subTitle:
-                                                          "${data[index].leaveTime}"),
+                                                      "${data[index].leaveTime}"),
                                                 ],
                                               ),
                                             ],

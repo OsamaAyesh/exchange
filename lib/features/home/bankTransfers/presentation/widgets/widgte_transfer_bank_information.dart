@@ -50,7 +50,7 @@ class WidgetTransferBankInformation extends StatelessWidget {
               blurRadius: 20,
               offset: const Offset(0, 3))
         ],
-        color: AppColors.primaryColor,
+        color: status==2?AppColors.primaryColor:AppColors.secondaryColor,
         borderRadius: BorderRadius.circular(5.r),
       ),
       child: Stack(
@@ -176,6 +176,7 @@ class WidgetTransferBankInformation extends StatelessWidget {
                           CostProcessWidget(
                             title: "مبلغ العملية",
                             subTitle: amount,
+                            status: status,
                           ),
                           Expanded(child: SizedBox()),
                         ],
@@ -190,6 +191,7 @@ class WidgetTransferBankInformation extends StatelessWidget {
                           CostProcessWidget(
                             title: "العملة",
                             subTitle: currency,
+                            status: status,
                           ),
                           Expanded(child: SizedBox()),
                         ],

@@ -32,7 +32,7 @@ class LogoutApiController with ApiHelper {
 
     if (response.statusCode == 200 || response.statusCode == 401) {
       // Clear the shared preferences on successful logout or unauthorized response
-      await SharedPrefController().clear();
+      // await SharedPrefController().clear();
       return ProcessResponse("تم تسجيل الخروج بنجاح", true);
     } else {
       // Handle error case

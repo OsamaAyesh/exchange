@@ -5,11 +5,13 @@ import 'package:exchange/features/home/bankTransfers/presentation/widgets/drop_d
 import 'package:exchange/features/home/bankTransfers/presentation/widgets/text_field_cusomized_box_screen_widget.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart'; // لاستعمال تنسيق التاريخ
 import 'package:provider/provider.dart';
+import 'dart:ui' as ui;
 
 import '../../../../../config/routes/app_routes.dart';
 import '../../../../../core/utils/app_colors.dart';
@@ -75,13 +77,98 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
   final UpdateTransferControllerApi _controller = UpdateTransferControllerApi();
   late ValueNotifier<String> _textValue;
 
+  // Future<void> _pickAndShowImage(BuildContext context) async {
+  //   final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  //
+  //   if (pickedFile != null) {
+  //     Provider.of<ImagePathProviderController>(context, listen: false)
+  //         .imagePathSet = pickedFile.path;
+  //   }
+  // }
   Future<void> _pickAndShowImage(BuildContext context) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    // إظهار حوار لتحديد مصدر الصورة
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'اختر مصدر الصورة',
+            style: GoogleFonts.cairo(
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.right,
+            textDirection: ui.TextDirection.rtl,
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.camera),
+                  title: Text(
+                    'التقاط صورة من الكاميرا',
+                    style: GoogleFonts.cairo(
+                      color: AppColors.secondaryColor,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.right,
+                    textDirection: ui.TextDirection.rtl,
+                  ),
+                  onTap: ()async {
+                    final pickedFile =
+                    await _picker.pickImage(source: ImageSource.camera);
+                    if (pickedFile != null) {
+                      // ضغط الصورة بعد التقاطها
+                      final compressedImage = await FlutterImageCompress.compressWithFile(
+                        pickedFile.path, // استخدام مسار الصورة بدلاً من الاسم
+                        quality: 20, // نسبة الجودة (من 0 إلى 100)
+                      );
 
-    if (pickedFile != null) {
-      Provider.of<ImagePathProviderController>(context, listen: false)
-          .imagePathSet = pickedFile.path;
-    }
+                      // تأكد من أن الصورة المضغوطة ليست فارغة قبل التحديث
+                      if (compressedImage != null) {
+                        // حفظ الصورة المضغوطة في ملف جديد
+                        final compressedFile = File('${Directory.systemTemp.path}/compressed_${pickedFile.name}');
+                        await compressedFile.writeAsBytes(compressedImage);
+
+                        // تحديث مسار الصورة المحددة في الـ Provider
+                        Provider.of<ImagePathProviderController>(context, listen: false)
+                            .imagePathSet = compressedFile.path; // احفظ مسار الصورة المضغوطة
+                      }
+                    }
+                    Navigator.of(context).pop(); // إغلاق الحوار قبل اختيار الصورةس
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.image),
+                  title: Text(
+                    'اختيار صورة من المعرض',
+                    style: GoogleFonts.cairo(
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.secondaryColor,
+                    ),
+                    textAlign: TextAlign.right,
+                    textDirection: ui.TextDirection.rtl,
+                  ),
+                  onTap: () async {
+                    final pickedFile =
+                    await _picker.pickImage(source: ImageSource.gallery);
+                    if (pickedFile != null) {
+                      // ضغط الصورة بعد اختيارها من المعرض
+                      Provider.of<ImagePathProviderController>(context,
+                          listen: false)
+                          .imagePathSet =
+                          pickedFile.path;
+                    }
+                    Navigator.of(context).pop(); // إغلاق الحوار قبل اختيار الصورة
+
+
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void submitTransaction(BuildContext context) async {
@@ -596,7 +683,7 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                           onChanged: (selectedAccount) {
                             _currencyController.text =
                                 selectedAccount!.currency!;
-                          },
+                          }, selectid: 15,
                         );
                       }
                     },

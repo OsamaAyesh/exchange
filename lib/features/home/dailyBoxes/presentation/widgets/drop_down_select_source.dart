@@ -281,12 +281,12 @@ class _DropDownSelectSourceState extends State<DropDownSelectSource> {
   void initState() {
     super.initState();
     // تعيين القيمة الابتدائية بناءً على القيمة المحددة
-    selectedAccount = widget.options.isNotEmpty
-        ? widget.options.firstWhere(
-            (option) => option.id == widget.selectDefaultValue,
-        orElse: () => widget.options[0] // إعادة الخيار الأول كقيمة افتراضية
-    )
-        : null; // إذا كانت القائمة فارغة
+    // selectedAccount = widget.options.isNotEmpty
+    //     ? widget.options.firstWhere(
+    //         (option) => option.id == widget.selectDefaultValue,
+    //     orElse: () => widget.options[0] // إعادة الخيار الأول كقيمة افتراضية
+    // )
+    //     : null; // إذا كانت القائمة فارغة
   }
   @override
   Widget build(BuildContext context) {
@@ -318,7 +318,7 @@ class _DropDownSelectSourceState extends State<DropDownSelectSource> {
                 isExpanded: true,
                 value: selectedAccount,
                 icon: const Icon(Icons.keyboard_arrow_down,
-                    color: AppColors.primaryColor, size: 24),
+                    color: Colors.black, size: 24),
                 dropdownColor: Colors.white,
                 onChanged: (DataSources? newValue) {
                   if (newValue != null) {
@@ -337,7 +337,7 @@ class _DropDownSelectSourceState extends State<DropDownSelectSource> {
                       style: GoogleFonts.cairo(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor),
+                          color: Colors.black),
                     ),
                   );
                 }).toList(),

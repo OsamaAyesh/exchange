@@ -6,7 +6,7 @@
         tools:ignore="SystemPermissionTypo" />
 
     <application
-        android:label="exchange"
+        android:label="مكتب القدس للصرافة"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true"

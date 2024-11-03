@@ -18,6 +18,7 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
   String amount;
   String total;
   String notes;
+  Color backgroundColor;
 
   WidgetDetailsBoxProcess(
       {super.key,
@@ -29,7 +30,8 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
       required this.source,
       required this.amount,
       required this.total,
-      required this.notes});
+      required this.notes,
+      required this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                   blurRadius: 20,
                   offset: const Offset(0, 3))
             ],
-            color: AppColors.primaryColor,
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(5.r),
           ),
           child: Stack(
@@ -149,7 +151,7 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                 ],
               ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
                     height: ScreenUtilNew.height(8),
@@ -173,7 +175,7 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                               const Expanded(child: SizedBox()),
                               CostProcessWidget(
                                 title: "مبلغ  المتبقي",
-                                subTitle: total,
+                                subTitle: total, color:backgroundColor,
                               ),
                               Expanded(child: SizedBox()),
                             ],
@@ -187,7 +189,7 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                               Expanded(child: SizedBox()),
                               CostProcessWidget(
                                 title: "مبلغ العملية",
-                                subTitle: amount,
+                                subTitle: amount, color: backgroundColor,
                               ),
                               Expanded(child: SizedBox()),
                             ],
@@ -200,7 +202,7 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                     height: ScreenUtilNew.height(8),
                   ),
                   SizedBox(
-                    width: ScreenUtilNew.width(130),
+                    width: ScreenUtilNew.width(120),
                     child: ColumnDataWidgetProcessDetails(
                       title: AppStrings.detailsScreen9,
                       subTitle: notes, maxLines: 3,

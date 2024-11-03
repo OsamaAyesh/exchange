@@ -428,18 +428,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   bool isLoadMore = false;
   bool allDataLoaded = false;
 
-  @override
-  void initState() {
-    super.initState();
-    scrollController.addListener(_scrollListener);
-    _fetchData(page);
-  }
 
-  @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
-  }
 
   Future<void> _scrollListener() async {
     if (scrollController.position.pixels == scrollController.position.maxScrollExtent &&
@@ -455,9 +444,35 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
+  // Future<void> _fetchData(int pageNumber) async {
+  //   if (isLoading || allDataLoaded) return;
+  //
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   List<NotificationModel>? newItems = await GetNotificationController().fetchNotifications(pageNumber);
+  //
+  //   if (newItems != null && newItems.isNotEmpty) {
+  //     setState(() {
+  //       page = pageNumber;
+  //       notifications.addAll(newItems);
+  //     });
+  //   } else {
+  //     setState(() {
+  //       allDataLoaded = true;
+  //     });
+  //   }
+  //
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
   Future<void> _fetchData(int pageNumber) async {
-    if (isLoading || allDataLoaded) return;
+    // هذا الشرط يمنع الجلب فقط إذا كانت كل البيانات محمّلة بالفعل
+    if (allDataLoaded) return;
 
+    // قم بتحديث حالة التحميل لعرض مؤشر التحميل بشكل صحيح
     setState(() {
       isLoading = true;
     });
@@ -466,19 +481,99 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
     if (newItems != null && newItems.isNotEmpty) {
       setState(() {
-        page = pageNumber;
         notifications.addAll(newItems);
+        page = pageNumber;
       });
+
+      // التحقق من عدد العناصر على الصفحة الأولى فقط لضمان جلب الصفحة الثانية إذا كانت البيانات قليلة
+      if (pageNumber == 1 && newItems.length < 15) {
+        print("Fetching additional data for page 2 due to fewer items on page 1...");
+        await _fetchData(2);
+      }
     } else {
       setState(() {
         allDataLoaded = true;
       });
     }
 
+    // بعد الانتهاء من الجلب، تأكد من إيقاف التحميل
     setState(() {
       isLoading = false;
     });
   }
+
+  // Future<void> _fetchData(int pageNumber) async {
+  //   // if (isLoading || allDataLoaded) return;
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   List<NotificationModel>? newItems = await GetNotificationController().fetchNotifications(pageNumber);
+  //   if (newItems != null && newItems.isNotEmpty) {
+  //     setState(() {
+  //       notifications.addAll(newItems);
+  //       page = pageNumber;
+  //       setState(() {
+  //
+  //       });
+  //     });
+  //
+  //     if (pageNumber == 1 && newItems.length < 15) {
+  //       print("less");
+  //       await _fetchData(2);
+  //       setState(() {
+  //
+  //       });
+  //       print(page);
+  //       print("less2");
+  //     }
+  //
+  //   } else {
+  //     setState(() {
+  //       allDataLoaded = true;
+  //     });
+  //   }
+  //
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
+
+  // Future<void> _fetchData(int pageNumber) async {
+  //   if (isLoading || allDataLoaded) return;
+  //
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   List<NotificationModel>? newItems = await GetNotificationController().fetchNotifications(pageNumber);
+  //
+  //   if (newItems != null && newItems.isNotEmpty) {
+  //     setState(() {
+  //       page = pageNumber;
+  //       notifications.addAll(newItems);
+  //     });
+  //     print(notifications.length);
+  //     if(pageNumber==1){
+  //       page=2;
+  //       await _fetchData(page);
+  //     }
+  //     print(notifications.length);
+  //
+  //     // // تحقق مما إذا كانت الصفحة الأولى أقل من العدد المتوقع، وإذا كانت أقل اطلب الصفحة التالية مباشرة
+  //     // if (pageNumber == 1 && newItems.length < 20) { // 20 هو العدد المتوقع من العناصر في كل صفحة
+  //     // }
+  //
+  //   } else {
+  //     setState(() {
+  //       allDataLoaded = true;
+  //     });
+  //   }
+  //
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
 
   void _markNotificationAsRead(String notificationId) {
     if (!readNotificationIds.contains(notificationId)) {
@@ -486,7 +581,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
       GetNotificationController().markAsRead(notificationId); // تحديث حالة الإشعار
     }
   }
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(_scrollListener);
+    _fetchData(page);
+  }
 
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -533,10 +639,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
               itemBuilder: (context, index) {
                 if (index < notifications.length) {
                   final notification = notifications[index];
-
                   // هنا يتم استدعاء دالة markAsRead عند عرض الإشعار
                   _markNotificationAsRead(notification.id!);
-
                   return WidgetNotification(
                     title: notification.data!.title!,
                     subTitle: notification.data!.data!,

@@ -52,7 +52,7 @@ class LoginApiController with ApiHelper {
     } catch (e) {
       // Catch any exception (network issues, invalid response, etc.)
       print("Error: $e");
-      return ProcessResponse("Failed to connect to the server. Please check your internet connection.", false);
+      return ProcessResponse("$e", false);
     }
   }
 }

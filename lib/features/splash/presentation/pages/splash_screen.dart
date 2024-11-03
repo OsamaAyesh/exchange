@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
               false;
       String route =Routes.loginScreen;
       // String route = loggedIn ? Routes.homeScreen : Routes.loginScreen;
-      Navigator.pushReplacementNamed(context, Routes.homeScreen);
+      Navigator.pushReplacementNamed(context, route);
     });
   }
   @override
