@@ -358,73 +358,145 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
             ),
           ),
           actions: [
-            Expanded(
-              child: GestureDetector(
-                onTap: (){
-                  setState(() {
-                    startDate = _startDateController.text;
-                    endDate = _endDateController.text;
-                    search = _searchController.text;
-                  });
-                  _applyFilter();
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  height: ScreenUtilNew.height(47),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryColor,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "تطبيق",
-                      style: GoogleFonts.cairo(
-                        fontSize: 14.sp,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+            Row(
+              children: [
+                Flexible(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        startDate = _startDateController.text;
+                        endDate = _endDateController.text;
+                        search = _searchController.text;
+                      });
+                      _applyFilter();
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: ScreenUtilNew.height(47),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryColor,
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "تطبيق",
+                          style: GoogleFonts.cairo(
+                            fontSize: 14.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(height: ScreenUtilNew.height(8),),
-            Expanded(
-              child: GestureDetector(
-                onTap: (){
-                  setState(() {
-                    status=false;
-                    status2=false;
-                    startDate=null;
-                    endDate=null;
-                    search=null;
-                    sourceId=null;
-                    type=null;
-                    selectedProcess=null;
-                  });
-
-                  // Navigator.pop(context);
-                },
-                child: Container(
-                  height: ScreenUtilNew.height(47),
-                  decoration: BoxDecoration(
-                    color: const Color(0XFFFFE2E2),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "تفريغ",
-                      style: GoogleFonts.cairo(
-                        fontSize: 14.sp,
-                        color: const Color(0XFFFF0000),
-                        fontWeight: FontWeight.bold,
+                SizedBox(width: ScreenUtilNew.width(8)), // Add space between buttons
+                Flexible(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        status = false;
+                        status2 = false;
+                        startDate = null;
+                        endDate = null;
+                        search = null;
+                        sourceId = null;
+                        type = null;
+                        selectedProcess = null;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: ScreenUtilNew.height(47),
+                      decoration: BoxDecoration(
+                        color: const Color(0XFFFFE2E2),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "إلغاء",
+                          style: GoogleFonts.cairo(
+                            fontSize: 14.sp,
+                            color: const Color(0XFFFF0000),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
+
+          // actions: [
+          //   Expanded(
+          //     child: GestureDetector(
+          //       onTap: (){
+          //         setState(() {
+          //           startDate = _startDateController.text;
+          //           endDate = _endDateController.text;
+          //           search = _searchController.text;
+          //         });
+          //         _applyFilter();
+          //         Navigator.pop(context);
+          //       },
+          //       child: Container(
+          //         height: ScreenUtilNew.height(47),
+          //         decoration: BoxDecoration(
+          //           color: AppColors.secondaryColor,
+          //           borderRadius: BorderRadius.circular(8.r),
+          //         ),
+          //         child: Center(
+          //           child: Text(
+          //             "تطبيق",
+          //             style: GoogleFonts.cairo(
+          //               fontSize: 14.sp,
+          //               color: Colors.white,
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          //   SizedBox(height: ScreenUtilNew.height(8),),
+          //   Expanded(
+          //     child: GestureDetector(
+          //       onTap: (){
+          //         setState(() {
+          //           status=false;
+          //           status2=false;
+          //           startDate=null;
+          //           endDate=null;
+          //           search=null;
+          //           sourceId=null;
+          //           type=null;
+          //           selectedProcess=null;
+          //         });
+          //
+          //         // Navigator.pop(context);
+          //       },
+          //       child: Container(
+          //         height: ScreenUtilNew.height(47),
+          //         decoration: BoxDecoration(
+          //           color: const Color(0XFFFFE2E2),
+          //           borderRadius: BorderRadius.circular(8.r),
+          //         ),
+          //         child: Center(
+          //           child: Text(
+          //             "تفريغ",
+          //             style: GoogleFonts.cairo(
+          //               fontSize: 14.sp,
+          //               color: const Color(0XFFFF0000),
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ],
         );
       },
     );
@@ -529,8 +601,10 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
               ),
               IconButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                  },
+                    Navigator.of(context).push(PageAnimationTransition(
+                      page: BoxScreen(idBox: widget.idBox, nameBox: widget.nameBox),
+                      pageAnimationType: RightToLeftTransition(),
+                    ));                  },
                   icon: const Icon(
                     Icons.arrow_forward_ios,
                     color: AppColors.primaryColor,
@@ -598,7 +672,7 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
                                         id: transaction.id ?? 0,
                                         typeName: transaction.typeName ?? "لا يوجد",
                                         typeId: transaction.type ?? 0,
-                                        boxName: widget.nameBox,
+                                        boxName: widget.nameBox, commissionid: transaction.commissionId,
                                       ),
                                       pageAnimationType: RightToLeftTransition(),
                                     ),

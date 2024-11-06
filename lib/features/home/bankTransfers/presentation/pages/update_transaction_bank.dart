@@ -33,6 +33,7 @@ import '../widgets/drop_down_widget_text_field_currency.dart';
 import '../widgets/widget_when_wating_data_drop_down_menu.dart';
 
 class UpdateTransactionBank extends StatefulWidget {
+  String id;
   String refNumberController;
   int accountIdController;
   int userIdController;
@@ -45,6 +46,7 @@ class UpdateTransactionBank extends StatefulWidget {
 
   UpdateTransactionBank(
       {super.key,
+        required this.id,
       required this.refNumberController,
       required this.accountIdController,
       required this.userIdController,
@@ -76,6 +78,7 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
   final ImagePicker _picker = ImagePicker();
   final UpdateTransferControllerApi _controller = UpdateTransferControllerApi();
   late ValueNotifier<String> _textValue;
+  String idTransaction="";
 
   // Future<void> _pickAndShowImage(BuildContext context) async {
   //   final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -171,67 +174,11 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
     );
   }
 
-  void submitTransaction(BuildContext context) async {
-    Provider.of<IsLoadingAddTransactionProvider>(context, listen: false)
-        .isLoadingSet = true;
-
-    final imagePath =
-        Provider.of<ImagePathProviderController>(context, listen: false)
-            .pathImageTransaction;
-    if (imagePath == null) {
-      // إذا كان مسار الصورة فارغًا، يمكنك معالجة الخطأ هنا
-      context.showSnackBar(message: "يرجى اختيار صورة.", erorr: true);
-      Provider.of<IsLoadingAddTransactionProvider>(context, listen: false)
-          .isLoadingSet = false;
-      return; // إنهاء الدالة
-    }
-
-    final response = await _controller.postTransaction(
-      refNumber: _refNumberController.text,
-      accountId: _accountIdController.text,
-      userId: _userIdController.text,
-      nameReceive: _nameReceiveController.text,
-      date: _dateController.text,
-      amount: double.tryParse(_amountController.text) ?? 0.0,
-      currency: _currencyController.text,
-      notes: _notesController.text,
-      imagePath: imagePath, // استخدم هنا القيمة التي تم التحقق منها
-    );
-
-    // إعادة تعيين حالة التحميل إلى false بعد الانتهاء من العملية
-    Provider.of<IsLoadingAddTransactionProvider>(context, listen: false)
-        .isLoadingSet = false;
-
-    if (response != null) {
-      if (response['status'] == 200) {
-        if (response['message'] == "لاتوجد نتائج ") {
-          Navigator.pushReplacementNamed(context, Routes.allTransactionScreen);
-          context.showSnackBar(
-              message: "تمت عملية تحديث البيانات بنجاح", erorr: false);
-        } else {
-          context.showSnackBar(message: response['message'], erorr: true);
-        }
-      } else {
-        // التعامل مع الأخطاء
-        String errorMessage = 'Error: ${response['message']}';
-        if (response['data'] != null) {
-          response['data'].forEach((key, value) {
-            errorMessage += '\n$key: ${value.join(', ')}'; // تجميع الأخطاء
-          });
-        }
-        context.showSnackBar(message: errorMessage, erorr: true);
-      }
-    } else {
-      // في حالة فشل الاتصال بالخادم
-      context.showSnackBar(
-          message: "فشل في تقديم المعاملة. يرجى المحاولة مرة أخرى.",
-          erorr: false);
-    }
-  }
 
   @override
   void initState() {
     // TODO: implement initState
+    idTransaction=widget.id;
     _refNumberController = TextEditingController();
     _accountIdController = TextEditingController();
     _userIdController = TextEditingController();
@@ -288,6 +235,64 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
     _currencyController.dispose();
     _notesController.dispose();
     super.dispose();
+  }
+  void submitTransaction(BuildContext context) async {
+    Provider.of<IsLoadingAddTransactionProvider>(context, listen: false)
+        .isLoadingSet = true;
+
+    final imagePath =
+        Provider.of<ImagePathProviderController>(context, listen: false)
+            .pathImageTransaction;
+    if (imagePath == null) {
+      // إذا كان مسار الصورة فارغًا، يمكنك معالجة الخطأ هنا
+      context.showSnackBar(message: "يرجى اختيار صورة.", erorr: true);
+      Provider.of<IsLoadingAddTransactionProvider>(context, listen: false)
+          .isLoadingSet = false;
+      return; // إنهاء الدالة
+    }
+
+    final response = await _controller.postTransaction(
+      id: idTransaction,
+      refNumber: _refNumberController.text,
+      accountId: _accountIdController.text,
+      userId: _userIdController.text,
+      nameReceive: _nameReceiveController.text,
+      date: _dateController.text,
+      amount: double.tryParse(_amountController.text) ?? 0.0,
+      currency: _currencyController.text,
+      notes: _notesController.text,
+      imagePath: imagePath, // استخدم هنا القيمة التي تم التحقق منها
+    );
+
+    // إعادة تعيين حالة التحميل إلى false بعد الانتهاء من العملية
+    Provider.of<IsLoadingAddTransactionProvider>(context, listen: false)
+        .isLoadingSet = false;
+
+    if (response != null) {
+      if (response['status'] == 200) {
+        if (response['message'] == "تم عملية تحديث البيانات بنجاح") {
+          Navigator.pushReplacementNamed(context, Routes.allTransactionScreen);
+          context.showSnackBar(
+              message: "تمت عملية تحديث البيانات بنجاح", erorr: false);
+        } else {
+          context.showSnackBar(message: response['message'], erorr: true);
+        }
+      } else {
+        // التعامل مع الأخطاء
+        String errorMessage = 'Error: ${response['message']}';
+        if (response['data'] != null) {
+          response['data'].forEach((key, value) {
+            errorMessage += '\n$key: ${value.join(', ')}'; // تجميع الأخطاء
+          });
+        }
+        context.showSnackBar(message: errorMessage, erorr: true);
+      }
+    } else {
+      // في حالة فشل الاتصال بالخادم
+      context.showSnackBar(
+          message: "فشل في تقديم المعاملة. يرجى المحاولة مرة أخرى.",
+          erorr: false);
+    }
   }
 
   @override

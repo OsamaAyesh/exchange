@@ -8,7 +8,8 @@ import '../../../../../core/utils/assets_manger.dart';
 class BoxWidget extends StatelessWidget {
   String nameBoxContain;
   String balance;
-   BoxWidget({super.key,required this.nameBoxContain,required this.balance});
+  Color backgroundColor;
+   BoxWidget({super.key,required this.nameBoxContain,required this.balance,required this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class BoxWidget extends StatelessWidget {
       child: Container(
         // height: ScreenUtilNew.height(117),
         width: double.infinity,
-        decoration: const BoxDecoration(color: AppColors.primaryColor),
+        decoration:  BoxDecoration(color:backgroundColor),
         child: Stack(
           children: [
             Image.asset(

@@ -1,9 +1,13 @@
 import 'package:exchange/features/home/attendance/data/models/attendance_model.dart';
 import 'package:exchange/features/home/attendance/presentation/manager/data_extra_model_provider.dart';
 import 'package:exchange/features/home/attendance/presentation/widgets/column_data_widget_process_details.dart';
+import 'package:exchange/features/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:page_animation_transition/animations/right_to_left_transition.dart';
+import 'package:page_animation_transition/page_animation_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/utils/app_colors.dart';
@@ -19,35 +23,226 @@ class AttendanceScreen extends StatefulWidget {
 }
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
+  String? startDate;
+  String? endDate;
+
+  // Function to fetch data with selected dates
+  Future<List<AttendanceModel>> _fetchFilteredData() {
+    return AttendanceController().fetchAttendance(context, startDate: startDate, endDate: endDate);
+  }
+
+  void _openFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final TextEditingController _startDateController = TextEditingController(text: startDate);
+        final TextEditingController _endDateController = TextEditingController(text: endDate);
+
+        DateTime? selectedStartDate;
+        DateTime? selectedEndDate;
+        final ValueNotifier<String> _startDateTextValue = ValueNotifier<String>("قم باختيار تاريخ البدء");
+        final ValueNotifier<String> _endDateTextValue = ValueNotifier<String>("قم باختيار تاريخ الانتهاء");
+
+        Future<void> _selectStartDate(BuildContext context) async {
+          final DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2100),
+          );
+          if (pickedDate != null && pickedDate != selectedStartDate) {
+            selectedStartDate = pickedDate;
+            _startDateTextValue.value = DateFormat('dd-MM-yyyy').format(selectedStartDate!);
+            _startDateController.text = _startDateTextValue.value;
+          }
+        }
+
+        Future<void> _selectEndDate(BuildContext context) async {
+          final DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2100),
+          );
+          if (pickedDate != null && pickedDate != selectedEndDate) {
+            selectedEndDate = pickedDate;
+            _endDateTextValue.value = DateFormat('dd-MM-yyyy').format(selectedEndDate!);
+            _endDateController.text = _endDateTextValue.value;
+          }
+        }
+
+        Widget _buildInputField({
+          required String labelText,
+          required TextEditingController controller,
+          VoidCallback? onTap,
+          ValueNotifier<String>? textValueNotifier,
+        }) {
+          return GestureDetector(
+            onTap: onTap,
+            child: Container(
+              height: ScreenUtilNew.height(52),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0XFFEBF7F1),
+                borderRadius: BorderRadius.circular(5.r),
+              ),
+              child: Row(
+                children: [
+                  SizedBox(width: ScreenUtilNew.width(8)),
+                  const Icon(Icons.date_range, color: AppColors.primaryColor),
+                  const Expanded(child: SizedBox()),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: ScreenUtilNew.width(8)),
+                      child: ValueListenableBuilder<String>(
+                        valueListenable: textValueNotifier!,
+                        builder: (context, value, child) {
+                          return Text(
+                            value,
+                            style: GoogleFonts.cairo(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return AlertDialog(
+          title: Center(
+            child: Text(
+              "فلترة البيانات",
+              style: GoogleFonts.cairo(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildInputField(
+                labelText: "Start Date",
+                controller: _startDateController,
+                onTap: () {
+                  _selectStartDate(context);
+                },
+                textValueNotifier: _startDateTextValue,
+              ),
+              SizedBox(height: ScreenUtilNew.height(16)),
+              _buildInputField(
+                labelText: "End Date",
+                controller: _endDateController,
+                onTap: () {
+                  _selectEndDate(context);
+                },
+                textValueNotifier: _endDateTextValue,
+              ),
+              SizedBox(height: ScreenUtilNew.height(16)),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  startDate = _startDateController.text;
+                  endDate = _endDateController.text;
+                });
+                _fetchFilteredData();
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "تطبيق",
+                style: GoogleFonts.cairo(
+                  fontSize: 16.sp,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "إلغاء",
+                style: GoogleFonts.cairo(
+                  fontSize: 16.sp,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.arrow_forward_ios,
-                color: AppColors.primaryColor,
-              ),
-            ),
-          ],
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: Text(
-            "الحضور والغياب",
-            style: GoogleFonts.cairo(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primaryColor),
-          ),
-        ),
         body: Column(
           children: [
+            SizedBox(
+              height: ScreenUtilNew.height(48),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: (){
+                        setState(() {
+                          startDate = null;
+                          endDate = null;
+                        });
+                        _fetchFilteredData();
+                      },
+                      icon: const Icon(
+                        Icons.update,
+                        color: Colors.red,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: (){
+                        _openFilterDialog();
+                      },
+                      icon: const Icon(
+                        Icons.filter_list_outlined,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  "الحضور والغياب",
+                  style: GoogleFonts.cairo(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryColor),
+                ),
+                IconButton(
+                    onPressed: () {
+                      Navigator.of(context).push(PageAnimationTransition(
+                        page: HomeScreen(),
+                        pageAnimationType: RightToLeftTransition(),
+                      ));                  },
+                    icon: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.primaryColor,
+                    ))
+              ],
+            ),
             // FutureBuilder(future: , builder: builder),
             Consumer<DataExtraModelProvider>(builder: (context,provider,child){
               return Padding(
@@ -92,7 +287,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               height: ScreenUtilNew.height(16),
             ),
             FutureBuilder<List<AttendanceModel>>(
-                future: AttendanceController().fetchAttendance(context),
+                future: _fetchFilteredData(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Expanded(
@@ -126,6 +321,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     }
                     return Expanded(
                       child: ListView.builder(
+                        padding: EdgeInsets.zero,
                           physics: const BouncingScrollPhysics(),
                           itemCount: data.length,
                           itemBuilder: (context, index) {

@@ -53,12 +53,12 @@ final routes={
   Routes.boxesDailyScreen:(context)=>const BoxesDailyScreen(),
   Routes.boxScreen:(context)=> BoxScreen(idBox: 0,nameBox: "",),
   Routes.detailsBoxScreen:(context)=> DetailsBoxScreen(idBox: 1, nameBox: '',),
-  Routes.updateProcessScreen:(context)=>UpdateProcess(numberProcess: '0923902', sourceId: 1, commission: '', amount: '', increaseAmount: '', total: '', notes: '', idBox: 1, serviceName: '', id: 0, typeName: '', typeId: 0, boxName: '',),
+  Routes.updateProcessScreen:(context)=>UpdateProcess(numberProcess: '0923902', sourceId: 1, commission: '', amount: '', increaseAmount: '', total: '', notes: '', idBox: 1, serviceName: '', id: 0, typeName: '', typeId: 0, boxName: '', commissionid: 0,),
   Routes.profileScreen:(context)=>const ProfileScreen(),
   Routes.updateDataScreen:(context)=> const UpdateData(),
   Routes.updatePassword:(context)=>const UpdatePassword(),
   Routes.addTransactionNewScreen:(context)=>const AddTransactionNewScreen(),
-  Routes.allTransactionScreen:(context)=>const AllTransactionsScreen(),
-  Routes.updateTransactionScreen:(context)=> UpdateTransactionBank(refNumberController: '', accountIdController: 0, userIdController: 0, nameReceiveController: '', dateController: '', amountController: '', currencyController: '', notesController: "", imagePath: '',)
+  Routes.allTransactionScreen:(context)=> AllTransactionsScreen(),
+  Routes.updateTransactionScreen:(context)=> UpdateTransactionBank(refNumberController: '', accountIdController: 0, userIdController: 0, nameReceiveController: '', dateController: '', amountController: '', currencyController: '', notesController: "", imagePath: '', id: '',)
 
 };

@@ -106,7 +106,7 @@ class WidgetTransferBankInformation extends StatelessWidget {
                         top: ScreenUtilNew.height(8)),
                     child: ColumnDataWidgetProcessDetails(
                       title: AppStrings.allTransaction6,
-                      subTitle: userName,
+                      subTitle: nameReceive,
                     ),
                   ),
                   Padding(
@@ -141,7 +141,7 @@ class WidgetTransferBankInformation extends StatelessWidget {
                         top: ScreenUtilNew.height(8)),
                     child: ColumnDataWidgetProcessDetails(
                       title: AppStrings.allTransaction7,
-                      subTitle: nameReceive,
+                      subTitle: userName,
                     ),
                   ),
                 ],

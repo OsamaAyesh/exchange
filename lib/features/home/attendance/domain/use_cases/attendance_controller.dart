@@ -14,16 +14,21 @@ class AttendanceController {
   Future<String?> _getToken() async {
     return _sharedPrefController.getValue(PrefKeys.token.name);
   }
-  Future<List<AttendanceModel>> fetchAttendance(BuildContext context) async {
+  Future<List<AttendanceModel>> fetchAttendance(BuildContext context,{String? startDate,
+    String? endDate}) async {
     String? token = await _getToken();
 
     if (token == null) {
       throw Exception("Token is not available");
     }
 
+    Uri uri = Uri.parse(urlApi).replace(queryParameters: {
+      if (startDate != null) 'start_date': startDate,
+      if (endDate != null) 'end_date': endDate,
+    });
     try {
       var response = await http.get(
-        Uri.parse(urlApi),
+        uri,
         headers: {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',

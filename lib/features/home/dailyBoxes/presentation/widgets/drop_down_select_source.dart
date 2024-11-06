@@ -281,12 +281,12 @@ class _DropDownSelectSourceState extends State<DropDownSelectSource> {
   void initState() {
     super.initState();
     // تعيين القيمة الابتدائية بناءً على القيمة المحددة
-    // selectedAccount = widget.options.isNotEmpty
-    //     ? widget.options.firstWhere(
-    //         (option) => option.id == widget.selectDefaultValue,
-    //     orElse: () => widget.options[0] // إعادة الخيار الأول كقيمة افتراضية
-    // )
-    //     : null; // إذا كانت القائمة فارغة
+    selectedAccount = widget.options.isNotEmpty
+        ? widget.options.firstWhere(
+            (option) => option.id == widget.selectDefaultValue,
+        orElse: () => widget.options[0] // إعادة الخيار الأول كقيمة افتراضية
+    )
+        : null; // إذا كانت القائمة فارغة
   }
   @override
   Widget build(BuildContext context) {

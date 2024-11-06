@@ -42,49 +42,77 @@ class SummaryProcess extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<DataSummaryProcess?>(
-        future: ApiSummaryProcessController().fetchData(),  // استدعاء الدالة باستخدام الكائن
+        future: ApiSummaryProcessController().fetchData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // عرض شريط تحميل أثناء انتظار البيانات
-            return Column(
+            return const Column(
               children: [
                 Expanded(child: SizedBox()),
-                Center(child: CircularProgressIndicator(
+                Center(
+                    child: CircularProgressIndicator(
                   color: AppColors.primaryColor,
                   backgroundColor: AppColors.secondaryColor,
                 )),
                 Expanded(child: SizedBox()),
-
               ],
             );
           } else if (snapshot.hasError) {
-            // عرض رسالة خطأ إذا فشل جلب البيانات
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
-            // عند جلب البيانات بنجاح، قم بعرضها
             DataSummaryProcess? data = snapshot.data;
 
-            // التحقق إذا كانت البيانات فارغة
             if (data == null) {
-              return Center(child: Text('No data available'));
+              return Center(
+                child: Text(
+                  'لا يوجد بيانات لعرضها',
+                  style: GoogleFonts.cairo(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.secondaryColor),
+                ),
+              );
             }
-
-            // عرض البيانات
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  ProcessWidgetSummary(imagePath: AssetsManger.walletIcon, textBalance: "${data.totalBalance}", title: "الرصيد الحالي "),
-                  SizedBox(height: ScreenUtilNew.height(16),),
-                  ProcessWidgetSummary(imagePath: AssetsManger.walletIcon, textBalance: "${data.bankTransferCount}", title: "التحويلات البنكية "),
-                  SizedBox(height: ScreenUtilNew.height(16),),
-                  ProcessWidgetSummary(imagePath: AssetsManger.walletIcon, textBalance: "${data.attendanceDays}", title: "عدد الحضور "),
-                  SizedBox(height: ScreenUtilNew.height(16),),
-                  ProcessWidgetSummary(imagePath: AssetsManger.walletIcon, textBalance: "${data.absenceDays}", title: "عدد الغياب")
+                  ProcessWidgetSummary(
+                      imagePath: AssetsManger.walletIcon,
+                      textBalance: "${data.totalBalance}",
+                      title: "الرصيد الحالي "),
+                  SizedBox(
+                    height: ScreenUtilNew.height(16),
+                  ),
+                  ProcessWidgetSummary(
+                      imagePath: AssetsManger.transBackProcessSummary,
+                      textBalance: "${data.bankTransferCount}",
+                      title: "التحويلات البنكية "),
+                  SizedBox(
+                    height: ScreenUtilNew.height(16),
+                  ),
+                  ProcessWidgetSummary(
+                      imagePath: AssetsManger.personAttendance,
+                      textBalance: "${data.attendanceDays}",
+                      title: "عدد الحضور "),
+                  SizedBox(
+                    height: ScreenUtilNew.height(16),
+                  ),
+                  ProcessWidgetSummary(
+                      imagePath: AssetsManger.personAttendanceTwo,
+                      textBalance: "${data.absenceDays}",
+                      title: "عدد الغياب")
                 ],
               ),
             );
           } else {
-            return Center(child: Text('No data available'));
+            return Center(
+              child: Text(
+                'لا يوجد بيانات لعرضها',
+                style: GoogleFonts.cairo(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.secondaryColor),
+              ),
+            );
           }
         },
       ),

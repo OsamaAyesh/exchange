@@ -14,7 +14,9 @@ import 'package:intl/intl.dart'; // تأكد من استيراد المكتبة
 import 'core/sevices/shared_pref_controller.dart';
 import 'exchange_app.dart';
 import 'features/home/attendance/presentation/manager/data_extra_model_provider.dart';
+import 'features/home/bankTransfers/presentation/manager/filterd_or_not.dart';
 import 'features/home/bankTransfers/presentation/manager/image_path_provider_controller.dart';
+import 'features/home/bankTransfers/presentation/manager/is_load_more_in_all_transactions.dart';
 import 'features/home/bankTransfers/presentation/manager/is_loading_add_transaction_provider.dart';
 import 'features/home/dailyBoxes/data/models/data_type_process.dart';
 import 'features/home/dailyBoxes/presentation/manager/providers/commision_controller_in_update_screen_provider.dart';
@@ -69,7 +71,9 @@ void main() async {
         ChangeNotifierProvider(create: (_)=>SummaryBalance()),
         ChangeNotifierProvider(create: (_)=>FillColorCommissionControllerProvider()),
         ChangeNotifierProvider(create: (_)=>EnabledTextFiledsOrNotProvider()),
-        ChangeNotifierProvider(create: (_)=>SelectdataListProcessProvider(DataTypeProcess(id: '1', name: 'Initial Process')))
+        ChangeNotifierProvider(create: (_)=>SelectdataListProcessProvider(DataTypeProcess(id: '1', name: 'Initial Process'))),
+        ChangeNotifierProvider(create: (_)=>FilterdOrNot()),
+        ChangeNotifierProvider(create: (_)=>IsLoadMoreInAllTransactions())
       ],
       child: ExchangeApp(),
     ),

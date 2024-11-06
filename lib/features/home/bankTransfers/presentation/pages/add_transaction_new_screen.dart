@@ -1,3 +1,31 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import 'dart:io';
 
 import 'package:exchange/config/routes/app_routes.dart';
@@ -188,15 +216,13 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                       // ضغط الصورة بعد التقاطها
                       final compressedImage = await FlutterImageCompress.compressWithFile(
                         pickedFile.path, // استخدام مسار الصورة بدلاً من الاسم
-                        quality: 20, // نسبة الجودة (من 0 إلى 100)
+                        quality: 50, // نسبة الجودة (من 0 إلى 100)
                       );
-
                       // تأكد من أن الصورة المضغوطة ليست فارغة قبل التحديث
                       if (compressedImage != null) {
                         // حفظ الصورة المضغوطة في ملف جديد
                         final compressedFile = File('${Directory.systemTemp.path}/compressed_${pickedFile.name}');
                         await compressedFile.writeAsBytes(compressedImage);
-
                         // تحديث مسار الصورة المحددة في الـ Provider
                         Provider.of<ImagePathProviderController>(context, listen: false)
                             .imagePathSet = compressedFile.path; // احفظ مسار الصورة المضغوطة

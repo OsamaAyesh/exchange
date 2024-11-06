@@ -20,9 +20,9 @@ class UpdateController {
   Future<DailyFundTransactionResponse?> updateProcess({
     required BuildContext context,
     required int idProcess,
-    required int sourceId,
-    required int commissionId,
-    required int serviceId,
+     required int sourceId,
+     String? commissionId,
+     String? serviceId,
     required int type,
     required double commission,
     required int commissionType,
@@ -39,8 +39,18 @@ class UpdateController {
 
     try {
       final Map<String, String> body = {
+        // 'source_id': "3",
+        // 'commission_id': "2",
+        // 'service_id': "1",
+        // 'type': "1",
+        // 'commission': "0",
+        // 'commission_type': "1",
+        // 'increase_amount': "0",
+        // 'amount': "200",
+        // 'notes': "notes",
+        // '_method':"put"
         'source_id': sourceId.toString(),
-        'commission_id': commissionId.toString(),
+        'commission_id': commissionId.toString() ?? "",
         'service_id': serviceId.toString(),
         'type': type.toString(),
         'commission': commission.toString(),
@@ -67,9 +77,9 @@ class UpdateController {
       if (response.statusCode == 200 && jsonResponse['status'] == 200) {
         print('Response: $jsonResponse'); // طباعة محتوى الاستجابة
         _settingModalBottomSheet(context);
-        Future.delayed(const Duration(milliseconds: 1200),(){
-          Navigator.pop(context);
-        });
+        // Future.delayed(const Duration(milliseconds: 1200),(){
+        //   Navigator.pop(context);
+        // });
         return DailyFundTransactionResponse.fromJson(jsonResponse);
       } else {
         context.showSnackBar(

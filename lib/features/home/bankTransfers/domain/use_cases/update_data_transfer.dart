@@ -7,7 +7,7 @@ import '../../../../../core/sevices/shared_pref_controller.dart';
 import 'package:http/http.dart' as http;
 
 class UpdateTransferControllerApi {
-  final String baseUrl = 'https://stage.qudsoffice.com/api/v1/employee-api/bank-transfer/64';
+  final String baseUrl = 'https://stage.qudsoffice.com/api/v1/employee-api/bank-transfer/';
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   Future<String?> _getToken() async {
@@ -17,6 +17,7 @@ class UpdateTransferControllerApi {
   }
 
   Future<Map<String, dynamic>?> postTransaction({
+    required String id,
     required String refNumber,
     required String accountId,
     required String userId,
@@ -27,6 +28,7 @@ class UpdateTransferControllerApi {
     required String notes,
     required String imagePath,
   }) async {
+    String url="$baseUrl$id";
     String? token = await _getToken();
     if (token == null) {
       print('Token not found in SharedPreferences');
@@ -46,7 +48,7 @@ class UpdateTransferControllerApi {
         '_method':"put"
       };
 
-      var request = http.MultipartRequest('POST', Uri.parse(baseUrl));
+      var request = http.MultipartRequest('POST', Uri.parse(url));
       request.headers['Authorization'] = 'Bearer $token';
       request.fields.addAll(body);
 

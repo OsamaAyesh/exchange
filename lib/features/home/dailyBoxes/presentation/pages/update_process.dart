@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_animation_transition/animations/bottom_to_top_faded_transition.dart';
+import 'package:page_animation_transition/animations/bottom_to_top_transition.dart';
 import 'package:page_animation_transition/animations/rotate_animation_transition.dart';
 import 'package:page_animation_transition/page_animation_transition.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +22,11 @@ import '../../data/models/get_sources_controller.dart';
 import '../../data/models/setting_model.dart';
 import '../../data/models/show_transaction_model.dart';
 import '../../domain/use_cases/get_sources.dart';
+import '../../domain/use_cases/setting_controller.dart';
 import '../../domain/use_cases/update_controller.dart';
 import '../manager/providers/commision_controller_in_update_screen_provider.dart';
+import '../manager/providers/enabled_text_fileds_or_not_provider.dart';
+import '../manager/providers/fill_color_commision_controller_provider.dart';
 import '../manager/providers/is_loading_in_update_screen.dart';
 import '../manager/providers/name_service_controller.dart';
 import '../manager/providers/types_operation.dart';
@@ -34,6 +39,7 @@ class UpdateProcess extends StatefulWidget {
   String serviceName;
   int sourceId;
   String commission;
+  int? commissionid;
   String amount;
   String increaseAmount;
   String total;
@@ -56,7 +62,9 @@ class UpdateProcess extends StatefulWidget {
       required this.id,
       required this.typeName,
       required this.typeId,
-      required this.boxName});
+      required this.boxName,
+      required this.commissionid,
+      });
 
   @override
   State<UpdateProcess> createState() => _UpdateProcessState();
@@ -83,19 +91,37 @@ class _UpdateProcessState extends State<UpdateProcess> {
   late TextEditingController sumAmountMoneyTextEditingController;
   late TextEditingController amountAfterCalculateTextEditingController;
   late TextEditingController notesTextEditingController;
+  final SettingController _settingController = SettingController();
+
   int typeId1 = 0;
+  String commissionLimit = "17";
   bool isLoading = false;
   int sourceId1=0;
-  int commissionId1=0;
-  int serviceId1=0;
+  String? commissionId1;
+  String? serviceId1;
 
 
+  Future<void> _fetchSettingsData() async {
+    try {
+      List<SettingData> settings = await _settingController.fetchSettings();
+      final commissionSetting = settings.firstWhere(
+            (setting) => setting.key == 'commission_limit',
+        orElse: () => SettingData(key: 'commission_limit', value: '0'),
+      );
+      setState(() {
+        commissionLimit = commissionSetting.value!;
+      });
+    } catch (e) {
+      context.showSnackBar(message: "$e", erorr: true);
+    }
+  }
 
   late String nameService1;
   List<TypeOperation> typesOperation = [];
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     nameService1 = widget.serviceName;
     numberProcessTextEditingController = TextEditingController();
@@ -114,7 +140,21 @@ class _UpdateProcessState extends State<UpdateProcess> {
     sumAmountMoneyTextEditingController.text=widget.increaseAmount;
     amountAfterCalculateTextEditingController.text=widget.total;
     notesTextEditingController.text=widget.notes;
-    super.initState();
+    typeId1=widget.typeId;
+    sourceId1=widget.sourceId;
+    commissionId1="${widget.commissionid}";
+    double? testColor=double.tryParse(widget.commission);
+    if(testColor==0||testColor==null){
+      Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=Color(0XFFDCD9D9);
+      Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=false;
+
+    }else{
+      Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=AppColors.primaryColor.withOpacity(0.08);
+      Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=true;
+    }
+    // Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=false;
+    // Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=const Color(0XFFDCD9D9);
+    _fetchSettingsData();
   }
   void _updateResult(String valueAmount, String valueSum, String valuePercent) {
     double? amountBefore = double.tryParse(valueAmount);
@@ -149,12 +189,11 @@ class _UpdateProcessState extends State<UpdateProcess> {
     notesTextEditingController.dispose();
     super.dispose();
   }
-
   void sendUpdateTransactionData(
       int idProcess,
     int sourceId,
-    int commissionId,
-    int serviceId,
+    String? commissionId,
+    String?serviceId,
     int type,
     double commission,
     double increaseAmount,
@@ -174,7 +213,7 @@ class _UpdateProcessState extends State<UpdateProcess> {
       serviceId: serviceId,
       type: type,
       commission: commission,
-      commissionType: 2,
+      commissionType: 1,
       // استخدم القيمة المناسبة لنوع العمولة
       increaseAmount: increaseAmount,
       amount: amount,
@@ -182,7 +221,6 @@ class _UpdateProcessState extends State<UpdateProcess> {
     );
 
     Provider.of<IsLoadingInUpdateScreen>(context,listen: false).newValueIsLoading=false;
-
     // هنا يمكنك التعامل مع الاستجابة
     if (response != null) {
       // نجاح التحديث
@@ -204,8 +242,8 @@ class _UpdateProcessState extends State<UpdateProcess> {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.pop(context);
-                // Navigator.of(context).push(PageAnimationTransition(page: DetailsBoxScreen(idBox: widget.idBox, nameBox: widget.boxName), pageAnimationType: RotationAnimationTransition()));
+                // Navigator.pop(context);
+                Navigator.of(context).push(PageAnimationTransition(page: DetailsBoxScreen(idBox: widget.idBox, nameBox: widget.boxName), pageAnimationType: BottomToTopFadedTransition()));
               },
               icon: const Icon(Icons.arrow_forward))
         ],
@@ -243,8 +281,8 @@ class _UpdateProcessState extends State<UpdateProcess> {
             ),
             GestureDetector(
               onTap: () {
-                context.showSnackBar(
-                    message: "لا يمكن تغيير رقم العملية", erorr: true);
+                // context.showSnackBar(
+                //     message: "لا يمكن تغيير رقم العملية", erorr: true);
               },
               child: Padding(
                 padding:
@@ -287,55 +325,113 @@ class _UpdateProcessState extends State<UpdateProcess> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          "إسم الخدمة",
-                          style: GoogleFonts.cairo(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.right,
-                          textDirection: TextDirection.rtl,
-                        ),
-                        SizedBox(height: ScreenUtilNew.height(8)),
-                        GestureDetector(
-                          onTap: () {
-                            context.showSnackBar(
-                                message: "لا يمكن تغيير إسم الخدمة",
-                                erorr: true);
-                          },
-                          child: Container(
-                            height: ScreenUtilNew.height(52),
-                            width: ScreenUtilNew.width(160),
-                            decoration: BoxDecoration(
-                                color: AppColors.primaryColor.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(5.r)),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      left: ScreenUtilNew.width(8)),
-                                  child: const Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: AppColors.primaryColor,
+                        // Text(
+                        //   "إسم الخدمة",
+                        //   style: GoogleFonts.cairo(
+                        //     fontSize: 14.sp,
+                        //     fontWeight: FontWeight.w600,
+                        //     color: Colors.black,
+                        //   ),
+                        //   textAlign: TextAlign.right,
+                        //   textDirection: TextDirection.rtl,
+                        // ),
+                        // SizedBox(height: ScreenUtilNew.height(8)),
+                        Consumer<NameServiceController>(
+                            builder: (context, provider, child) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "إسم الخدمة",
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
+                                    ),
+                                    textAlign: TextAlign.right,
+                                    textDirection: TextDirection.rtl,
                                   ),
-                                ),
-                                const Expanded(child: SizedBox()),
-                                Text(
-                                  nameServiceControllerProvider.nameService,
-                                  style: GoogleFonts.cairo(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.primaryColor,
+                                  SizedBox(height: ScreenUtilNew.height(8)),
+                                  GestureDetector(
+                                    onTap: () {
+                                      // context.showSnackBar(
+                                      //     message: "لا يمكن تغيير إسم الخدمة",
+                                      //     erorr: true);
+                                    },
+                                    child: Container(
+                                      height: ScreenUtilNew.height(52),
+                                      width: ScreenUtilNew.width(160),
+                                      decoration: BoxDecoration(
+                                          color: Color(0XFFDCD9D9),
+                                          borderRadius: BorderRadius.circular(5.r)),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left: ScreenUtilNew.width(8)),
+                                            child: const Icon(
+                                              Icons.keyboard_arrow_down,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          const Expanded(child: SizedBox()),
+                                          Text(
+                                            provider.nameService,
+                                            style: GoogleFonts.cairo(
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: ScreenUtilNew.width(8),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: ScreenUtilNew.width(8),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                                ],
+                              );
+                            }),
+
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     // context.showSnackBar(
+                        //     //     message: "لا يمكن تغيير إسم الخدمة",
+                        //     //     erorr: true);
+                        //   },
+                        //   child: Container(
+                        //     height: ScreenUtilNew.height(52),
+                        //     width: ScreenUtilNew.width(160),
+                        //     decoration: BoxDecoration(
+                        //         color: AppColors.primaryColor.withOpacity(0.08),
+                        //         borderRadius: BorderRadius.circular(5.r)),
+                        //     child: Row(
+                        //       children: [
+                        //         Padding(
+                        //           padding: EdgeInsets.only(
+                        //               left: ScreenUtilNew.width(8)),
+                        //           child: const Icon(
+                        //             Icons.keyboard_arrow_down,
+                        //             color: Colors.black,
+                        //           ),
+                        //         ),
+                        //         const Expanded(child: SizedBox()),
+                        //         Text(
+                        //           nameServiceControllerProvider.nameService,
+                        //           style: GoogleFonts.cairo(
+                        //             fontSize: 14.sp,
+                        //             fontWeight: FontWeight.w400,
+                        //             color: Colors.black,
+                        //           ),
+                        //         ),
+                        //         SizedBox(
+                        //           width: ScreenUtilNew.width(8),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     );
                   }),
@@ -367,12 +463,11 @@ class _UpdateProcessState extends State<UpdateProcess> {
                               textTitle: "المصدر أو المستفيد",
                               selectedValueString: "",
                               onChanged: (selectedAccount) {
+                                print(selectedAccount!.id);
                                 _updateResult(
                                     amountMoneyTextEditingController.text,
                                     sumAmountMoneyTextEditingController.text,
                                     percentTextEditingController.text);
-                                print(
-                                    "Commission${selectedAccount!.commissionValue}");
                                 percentTextEditingController.text =
                                     selectedAccount.commissionValue == ""
                                         ? "0.00"
@@ -391,16 +486,43 @@ class _UpdateProcessState extends State<UpdateProcess> {
                                             listen: false)
                                         .changeTypesOperation =
                                     selectedAccount.typeOperation!;
+                                sourceId1=3;
                                 Provider.of<CommissionControllerInUpdateScreenProvider>(
                                             context,
                                             listen: false)
                                         .newCommission =
                                     percentTextEditingController.text;
-                                sourceId1=selectedAccount.accountId!;
-                                commissionId1=selectedAccount.commissionId!;
-                                serviceId1=selectedAccount.serviceId!;
-                                print("sourceId${sourceId1}");
-                                print("sourceName${selectedAccount.serviceName}");
+                                print("sourse id$sourceId1");
+                                //////////////////
+                                percentTextEditingController.text =
+                                selectedAccount.commissionValue == ""
+                                    ? "0"
+                                    : selectedAccount.commissionValue!;
+                                Provider.of<
+                                    CommissionControllerInUpdateScreenProvider>(
+                                    context,
+                                    listen: false)
+                                    .newCommission=percentTextEditingController.text;
+                                double? testColor=double.tryParse(percentTextEditingController.text);
+                                print(testColor);
+                                if(testColor==0||testColor==null){
+                                  Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=Color(0XFFDCD9D9);
+                                }else{
+                                  Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=AppColors.primaryColor.withOpacity(0.08);
+
+                                }
+                                Provider.of<
+                                    CommissionControllerInUpdateScreenProvider>(
+                                    context,
+                                    listen: false)
+                                    .commission;
+
+
+                                sourceId1=selectedAccount.id!;
+                                commissionId1=selectedAccount.commissionId==null?"":"${selectedAccount.commissionId}";
+                                serviceId1=selectedAccount.serviceId==null?"":"${selectedAccount.serviceId}";
+                                print("sreviceId${serviceId1}");
+                                print("sourceName${commissionId1}");
                                 // int typeId1 = 0;
                                 // bool isLoading = false;
                                 // int sourceId1=0;
@@ -462,7 +584,7 @@ class _UpdateProcessState extends State<UpdateProcess> {
                         filledColor: AppColors.primaryColor.withOpacity(0.08),
                         styleHintText: GoogleFonts.cairo(
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor,
+                          color: Colors.black,
                           fontSize: 16.sp,
                         ),
                       ),
@@ -482,23 +604,72 @@ class _UpdateProcessState extends State<UpdateProcess> {
                       SizedBox(
                         height: ScreenUtilNew.height(8),
                       ),
-                      TextFieldCusomizedBoxScreenWidget(
-                        textInputType: TextInputType.number,
-                        hintText: "0.0",
-                        iconData: Icons.percent_rounded,
-                        textEditingController: percentTextEditingController,
-                        textFiledDiscount: true,
-                        width: ScreenUtilNew.width(160),
-                        minLines: 1,
-                        maxLines: 2,
-                        enabled: true,
-                        filledColor: AppColors.primaryColor.withOpacity(0.08),
-                        styleHintText: GoogleFonts.cairo(
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor,
-                          fontSize: 16.sp,
-                        ),
-                      ),
+                      Consumer2<FillColorCommissionControllerProvider,EnabledTextFiledsOrNotProvider>(builder: (context,provider,provider2,child){
+                        return TextFieldCusomizedBoxScreenWidget(
+                          textInputType: TextInputType.number,
+                          hintText: "0.0",
+                          iconData: Icons.percent_rounded,
+                          textEditingController: percentTextEditingController,
+                          textFiledDiscount: true,
+                          width: ScreenUtilNew.width(160),
+                          minLines: 1,
+                          maxLines: 2,
+                          onChanged: (value) {
+                            double? value1 = double.tryParse(value);
+                            double? valueLimit =
+                            double.tryParse(commissionLimit);
+                            if (value1! <= valueLimit!) {
+                              _updateResult(
+                                  amountMoneyTextEditingController.text,
+                                  sumAmountMoneyTextEditingController.text,
+                                  percentTextEditingController.text);
+                            } else {
+                              setState(() {
+                                percentTextEditingController.text = commissionLimit;
+                                context.showSnackBar(
+                                    message:
+                                    "لا يمكن أن تكون العمولة أعلى من $commissionLimit",
+                                    erorr: true);
+                              });
+                            }
+                            _updateResult(
+                                amountMoneyTextEditingController.text,
+                                sumAmountMoneyTextEditingController.text,
+                                percentTextEditingController.text);
+                          },
+                          enabled: provider2.enabledOrNot,
+                          filledColor: provider.colorCommission,
+                          styleHintText: GoogleFonts.cairo(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
+
+                        );
+                      })
+
+                      // TextFieldCusomizedBoxScreenWidget(
+                      //   textInputType: TextInputType.number,
+                      //   hintText: "0.0",
+                      //   onChanged: (value){
+                      //     _updateResult(
+                      //         amountMoneyTextEditingController.text,
+                      //         sumAmountMoneyTextEditingController.text,
+                      //         percentTextEditingController.text);
+                      //   },
+                      //   iconData: Icons.percent_rounded,
+                      //   textEditingController: percentTextEditingController,
+                      //   textFiledDiscount: true,
+                      //   width: ScreenUtilNew.width(160),
+                      //   minLines: 1,
+                      //   maxLines: 2,
+                      //   enabled: true,
+                      //   filledColor: AppColors.primaryColor.withOpacity(0.08),
+                      //   styleHintText: GoogleFonts.cairo(
+                      //     fontWeight: FontWeight.w400,
+                      //     color: Colors.black,
+                      //     fontSize: 16.sp,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],
@@ -587,7 +758,7 @@ class _UpdateProcessState extends State<UpdateProcess> {
                         filledColor: AppColors.primaryColor.withOpacity(0.08),
                         styleHintText: GoogleFonts.cairo(
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor,
+                          color: Colors.black,
                           fontSize: 16.sp,
                         ),
                       )
@@ -648,6 +819,8 @@ class _UpdateProcessState extends State<UpdateProcess> {
                                     if (typeOperation.id == "2" ||
                                         typeOperation.id == "3") {
                                       percentTextEditingController.text = "0.0";
+                                      Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=false;
+                                      Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=const Color(0XFFDCD9D9);
                                       _updateResult(
                                           amountMoneyTextEditingController.text,
                                           sumAmountMoneyTextEditingController
@@ -658,6 +831,8 @@ class _UpdateProcessState extends State<UpdateProcess> {
                                         provider.changeSelectedId(value!);
                                       });
                                     } else {
+                                      Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=true;
+                                      Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=AppColors.primaryColor.withOpacity(0.08);
                                       percentTextEditingController
                                           .text = Provider.of<
                                                   CommissionControllerInUpdateScreenProvider>(
@@ -741,7 +916,7 @@ class _UpdateProcessState extends State<UpdateProcess> {
                   filledColor: AppColors.primaryColor.withOpacity(0.08),
                   styleHintText: GoogleFonts.cairo(
                     fontWeight: FontWeight.w400,
-                    color: AppColors.primaryColor,
+                    color: Colors.black,
                     fontSize: 16.sp,
                   ),
                 )),
@@ -773,21 +948,32 @@ class _UpdateProcessState extends State<UpdateProcess> {
                           0;
                       commisstion3 = (commisstion2 / 100) * amount2;
                     }
-                    print("Type Id:$typeId1");
+                    // print("Type Id:$typeId1");
+                    // print("Id Process: ${widget.id}");
+                    // print("sourceId1 Process: $sourceId1");
+                    // print("commissionId1 Process:$commissionId1");
+                    // print("commissionId1 Process:$serviceId1");
+                    //
+                    // print("typeId1 Process: $typeId1");
+                    // print("commisstion2 Process:$commisstion2");
+                    // print("increase2 Process: $increase2");
+                    // print("amount2 Process: $amount2");
+                    // print("notesTextEditingController Process : ${notesTextEditingController.text}");
                     sendUpdateTransactionData(
                         widget.id,
                         sourceId1,
-                        commissionId1,
-                        serviceId1,
+                        commissionId1=="0"?"":commissionId1,
+                        serviceId1=="0"?"":serviceId1,
                         typeId1,
-                        commisstion3,
+                        commisstion2,
                         increase2,
                         amount2,
                         notesTextEditingController.text
                     );
-                    Future.delayed(Duration(milliseconds: 1400),(){
+                    Future.delayed(Duration(milliseconds: 1300),(){
                       // Navigator.pushReplacement(context, DetailsBoxScreen(idBox: idBox, nameBox: nameBox))
-                      // Navigator.of(context).push(PageAnimationTransition(page: DetailsBoxScreen(idBox: widget.idBox, nameBox: widget.boxName), pageAnimationType: RotationAnimationTransition()));
+                      Navigator.pop(context);
+                      Navigator.of(context).push(PageAnimationTransition(page: DetailsBoxScreen(idBox: widget.idBox, nameBox: widget.boxName), pageAnimationType: BottomToTopFadedTransition()));
                     });
                   },
                   title: "تعديل البيانات");

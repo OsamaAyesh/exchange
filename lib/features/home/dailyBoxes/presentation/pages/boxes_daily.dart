@@ -3,10 +3,12 @@ import 'package:exchange/core/utils/screen_util_new.dart';
 import 'package:exchange/features/home/dailyBoxes/domain/use_cases/daily_boxes_controller.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/pages/box_screen.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/widgets/daily_boxes_widget.dart';
+import 'package:exchange/features/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_animation_transition/animations/left_to_right_transition.dart';
+import 'package:page_animation_transition/animations/right_to_left_transition.dart';
 import 'package:page_animation_transition/page_animation_transition.dart';
 
 import '../../../../../core/utils/app_colors.dart';
@@ -27,7 +29,9 @@ class BoxesDailyScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).push(PageAnimationTransition(
+                  page: const HomeScreen(),
+                  pageAnimationType: RightToLeftTransition()));
             },
             icon: const Icon(
               Icons.arrow_forward,
@@ -48,7 +52,6 @@ class BoxesDailyScreen extends StatelessWidget {
         children: [
           FutureBuilder<List<BoxesDaily>?>(
             future: ApiDailyBoxesController().fetchData(),
-            // No need for the nullable check if the future is guaranteed to return a non-null future object.
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Expanded(
@@ -88,8 +91,15 @@ class BoxesDailyScreen extends StatelessWidget {
                         return Column(
                           children: [
                             GestureDetector(
-                              onTap:(){
-                                Navigator.of(context).push(PageAnimationTransition(page: BoxScreen(idBox: box.id!,nameBox: box.name!,), pageAnimationType: LeftToRightTransition()));
+                              onTap: () {
+                                Navigator.of(context).push(
+                                    PageAnimationTransition(
+                                        page: BoxScreen(
+                                          idBox: box.id!,
+                                          nameBox: box.name!,
+                                        ),
+                                        pageAnimationType:
+                                            LeftToRightTransition()));
                               },
                               child: DailyBoxesWidget(
                                   nameBox: "${box.name}",
@@ -106,8 +116,16 @@ class BoxesDailyScreen extends StatelessWidget {
                       }),
                 ); // Replace this with actual UI rendering
               } else {
-                return const Expanded(
-                  child: Center(child: Text('No data available')),
+                return Expanded(
+                  child: Center(
+                      child: Text(
+                    'لا يوجد صناديق اليوم',
+                    style: GoogleFonts.cairo(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.sp,
+                      color: AppColors.secondaryColor,
+                    ),
+                  )),
                 );
               }
             },

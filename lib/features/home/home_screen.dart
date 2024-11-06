@@ -220,7 +220,7 @@ class HomeScreen extends StatelessWidget {
                     title: AppStrings.homeScreen6,
                     pathIcon: AssetsManger.transBankIcon,
                     onTap: () {
-                      Navigator.of(context).push(PageAnimationTransition(page: const AllTransactionsScreen(), pageAnimationType: LeftToRightTransition()));
+                      Navigator.of(context).push(PageAnimationTransition(page:  AllTransactionsScreen(), pageAnimationType: LeftToRightTransition()));
 
                     },
                   ),

@@ -2,6 +2,7 @@ import 'package:exchange/core/utils/assets_manger.dart';
 import 'package:exchange/core/utils/context_extension.dart';
 import 'package:exchange/core/utils/screen_util_new.dart';
 import 'package:exchange/features/home/dailyBoxes/data/models/box.dart';
+import 'package:exchange/features/home/dailyBoxes/data/models/daily_boxes.dart';
 import 'package:exchange/features/home/dailyBoxes/domain/use_cases/box_controller.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/manager/providers/controller_selected_sourse.dart';
 import 'package:exchange/features/home/dailyBoxes/presentation/manager/providers/fill_color_commision_controller_provider.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_animation_transition/animations/bottom_to_top_transition.dart';
+import 'package:page_animation_transition/animations/right_to_left_transition.dart';
 import 'package:page_animation_transition/animations/top_to_bottom_transition.dart';
 import 'package:page_animation_transition/page_animation_transition.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +39,7 @@ import '../manager/providers/enabled_text_fileds_or_not_provider.dart';
 import '../manager/providers/types_operation.dart';
 import '../widgets/drop_down_select_source.dart';
 import '../widgets/drop_down_widget_text_field.dart';
+import 'boxes_daily.dart';
 // import '../widgets/text_field_cusomized_box_screen_widget.dart';
 
 class BoxScreen extends StatefulWidget {
@@ -64,8 +67,8 @@ class _BoxScreenState extends State<BoxScreen> {
   //posted data
   int idBoxSelected = 0;
   int sourceId = 0;
-  int commissionId = 0;
-  int serviceId = 0;
+  String commissionId = "";
+  String serviceId = "";
   int typeId = 0;
   double commission = 0; //if 2-3 =0
   int commissionType = 2;
@@ -93,53 +96,19 @@ class _BoxScreenState extends State<BoxScreen> {
   String typeTransication = ""; // Initial value, adjust as needed
   bool isLoading = false;
   bool chooseFromDialog=false;
-  // void sendTransactionData(
-  //   int dailyFundId1,
-  //   int sourceId1,
-  //   int commissionId1,
-  //   int serviceId1,
-  //   int type1,
-  //   double commission1,
-  //   // int commissionType1,
-  //   double increaseAmount1,
-  //   double amount1,
-  //   String notes1,
-  // ) async {
-  //   ApiControllerDailyFundTransaction apiController =
-  //       ApiControllerDailyFundTransaction();
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //   DailyFundTransactionResponse? response = await apiController.postProcess(
-  //     context: context,
-  //     dailyFundId: dailyFundId1,
-  //     sourceId: sourceId1,
-  //     commissionId: commissionId1,
-  //     serviceId: serviceId1,
-  //     type: type1,
-  //     commission: commission1,
-  //     commissionType: 2,
-  //     increaseAmount: increaseAmount1,
-  //     amount: amount1,
-  //     notes: notes1,
-  //   );
-  //   setState(() {
-  //     isLoading = false; // انتهاء التحميل
-  //   });
-  //
-  //   if (response!.status==200) {
-  //     _settingModalBottomSheet(context);
-  //     print('Transaction was successful: ${response.message}');
-  //   } else {
-  //     print('Failed to post transaction');
-  //   }
-  // }
+  int currentIndexInformationBox=1;
+  List<Color> colorsBox=[
+    const Color(0XFFBD0404),
+    const Color(0XFF0040FF),
+    const Color(0XFF04BD26),
+    AppColors.secondaryColor
+  ];
 
   void sendTransactionData(
       int dailyFundId1,
       int sourceId1,
-      int commissionId1,
-      int serviceId1,
+      String commissionId1,
+      String serviceId1,
       int type1,
       double commission1,
       double increaseAmount1,
@@ -167,25 +136,10 @@ class _BoxScreenState extends State<BoxScreen> {
     );
 
     setState(() {
-      isLoading = false; // انتهاء التحميل
+      isLoading = false;
     });
 
   }
-// if (response != null) {
-  //   // Additional debug print to check exact response data
-  //   print('Parsed response status: ${response.status}');
-  //   print('Parsed response message: ${response.message}');
-  //
-  //   if (response.status == 200) {
-  //     print('Transaction was successful: ${response.message}');
-  //   } else {
-  //     print('Transaction failed with status: ${response.status}, message: ${response.message}');
-  //     context.showSnackBar(message: 'Transaction failed: ${response.message}', erorr: true);
-  //   }
-  // } else {
-  //   print('Response was null, indicating failure in postProcess');
-  //   context.showSnackBar(message: 'Failed to post transaction', erorr: true);
-  // }
 
   Future<void> _fetchSettingsData() async {
     try {
@@ -270,7 +224,9 @@ class _BoxScreenState extends State<BoxScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).push(PageAnimationTransition(page:  const BoxesDailyScreen(), pageAnimationType: RightToLeftTransition()));
+
+              // Navigator.pop(context);
             },
             icon: const Icon(
               Icons.arrow_forward,
@@ -281,7 +237,6 @@ class _BoxScreenState extends State<BoxScreen> {
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).push(PageAnimationTransition(page: DetailsBoxScreen(idBox: widget.idBox, nameBox: widget.nameBox,), pageAnimationType: TopToBottomTransition()));
-
             // Navigator.pushNamed(context, Routes.detailsBoxScreen);
           },
           icon: const Icon(
@@ -341,7 +296,7 @@ class _BoxScreenState extends State<BoxScreen> {
                       itemBuilder: (context, index) {
                         return BoxWidget(
                           nameBoxContain: detailsBox[index],
-                          balance: dataBox[index]!,
+                          balance: dataBox[index]!, backgroundColor: colorsBox[index],
                         );
                       },
                     ),
@@ -362,11 +317,15 @@ class _BoxScreenState extends State<BoxScreen> {
               controller: pageController,
               count: 4,
               effect: ExpandingDotsEffect(
-                activeDotColor: AppColors.primaryColor,
+                activeDotColor: colorsBox[currentIndexInformationBox],
                 dotHeight: ScreenUtilNew.height(8),
                 dotWidth: ScreenUtilNew.width(8),
               ),
-              onDotClicked: (index) {},
+              onDotClicked: (index) {
+                setState(() {
+                  currentIndexInformationBox=index;
+                });
+              },
             ),
             Column(
               children: [
@@ -537,6 +496,7 @@ class _BoxScreenState extends State<BoxScreen> {
                                     }else{
                                       Provider.of<EnabledTextFiledsOrNotProvider>(context,listen: false).newValue=true;
                                     }
+                                    // Provider.of<TypesOperationProvider>(context,listen: false).changeTypesOperation=selectedAccount.typeOperation![0].id;
                                     _updateResult(
                                         amountController.text,
                                         increaseAmountController.text,
@@ -544,8 +504,10 @@ class _BoxScreenState extends State<BoxScreen> {
                                     idBoxSelected = widget.idBox;
                                     sourceId = selectedAccount.id!;
                                     commissionId =
-                                        selectedAccount.commissionId!;
-                                    serviceId = selectedAccount.serviceId!;
+                                        "${selectedAccount.commissionId}"=="null"?"":"${selectedAccount.commissionId}";
+                                    commissionId=commissionId=="0"?"":commissionId;
+                                    serviceId = "${selectedAccount.serviceId}"=="null"?"": "${selectedAccount.serviceId}";
+                                    serviceId=serviceId=="0"?"":serviceId;
                                     typesTransaction =
                                         selectedAccount.typeOperation!;
                                     serviceName = selectedAccount.serviceName!;
@@ -571,7 +533,6 @@ class _BoxScreenState extends State<BoxScreen> {
                                       Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=Color(0XFFDCD9D9);
                                     }else{
                                       Provider.of<FillColorCommissionControllerProvider>(context,listen: false).newColorCommission=AppColors.primaryColor.withOpacity(0.08);
-
                                     }
                                     Provider.of<
                                         CommissionControllerInUpdateScreenProvider>(
@@ -951,16 +912,22 @@ class _BoxScreenState extends State<BoxScreen> {
                                   double amount2 =
                                       double.tryParse(amountController.text) ?? 0;
                                   double commisstion2 = 0;
-                                  double commisstion3 = 0;
+                                  String commisstion3="";
                                   if (typeId == 3 || typeId == 2) {
                                     commisstion2 = 0;
+                                    commisstion3="";
                                   } else {
                                     commisstion2 = double.tryParse(
                                         commissionController.text) ??
                                         0;
-                                    commisstion3 = (commisstion2 / 100) * amount2;
+                                    commisstion3="$commisstion2";
+                                    // commisstion3 = (commisstion2 / 100) * amount2;
                                   }
                                   print("Type Id:$typeId");
+                                  print("commissionId:$commissionId");
+                                  print("service id:$serviceId");
+                          //         ommissionId: commissionId1,
+                          // serviceId: serviceId1,
                                   sendTransactionData(
                                     idBoxSelected,
                                     sourceId,
@@ -1003,7 +970,7 @@ class _BoxScreenState extends State<BoxScreen> {
         return buildCustomDialogWidget(
           () {
             if(typeId==4){
-              typeId = int.tryParse(Provider.of<TypesOperationProvider>(context, listen: false).selectedId!)??0;
+              typeId = int.tryParse(Provider.of<TypesOperationProvider>(context).selectedId!)??0;
               print("Type Id New :$typeId");
             }
             chooseFromDialog=true;
