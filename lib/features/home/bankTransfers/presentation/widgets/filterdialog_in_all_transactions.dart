@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../manager/filterd_or_not.dart';
 
 class FilterDialog extends StatefulWidget {
   final Function(String?, String?, String?, String?, String?) onApply;
@@ -51,6 +54,8 @@ class _FilterDialogState extends State<FilterDialog> {
         TextButton(
           onPressed: () {
             widget.onApply(startDate, endDate, search, accountId, userId);
+            Provider.of<FilterdOrNot>(context, listen: false)
+                .newValueIsFilter = true;
             Navigator.of(context).pop();
           },
           child: Text('Apply'),

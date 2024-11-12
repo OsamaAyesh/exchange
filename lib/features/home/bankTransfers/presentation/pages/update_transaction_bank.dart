@@ -871,7 +871,7 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                       onTap: () {
                         submitTransaction(context);
                       },
-                      title: AppStrings.addNewTransication20);
+                      title: "تعديل الحوالة");
             }),
             SizedBox(
               height: ScreenUtilNew.height(12),

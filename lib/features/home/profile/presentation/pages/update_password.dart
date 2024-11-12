@@ -156,6 +156,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
 
     // الانتظار للحصول على النتيجة
     final result = await ApiControllerUpdatePassword().updatePassword(
+      context,
       oldPassword: oldPassword,
       newPassword: newPassword,
       confirmNewPassword: confirmNewPassword,
@@ -167,14 +168,14 @@ class _UpdatePasswordState extends State<UpdatePassword> {
 
     if (result != null && result.status == 200) {
       // عرض SnackBar عند نجاح العملية
-      context.showSnackBar(message: result.message ?? "تم تحديث كلمة المرور بنجاح",erorr: false);
+      // context.showSnackBar(message: result.message ?? "تم تحديث كلمة المرور بنجاح",erorr: false);
       oldPasswordTextEditingController.clear();
       newPasswordTextEditingController.clear();
       confirmPasswordTextEditingController.clear();
       // يمكنك توجيه المستخدم إلى صفحة أخرى إذا رغبت
     } else {
       // في حالة الفشل، يمكن عرض رسالة خطأ أيضًا
-      context.showSnackBar(message: result?.message ?? "فشل في تحديث كلمة المرور",erorr: true);
+      // context.showSnackBar(message: result!.message ?? "",erorr: true);
       oldPasswordTextEditingController.clear();
       newPasswordTextEditingController.clear();
       confirmPasswordTextEditingController.clear();

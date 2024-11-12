@@ -18,6 +18,7 @@ import 'features/home/bankTransfers/presentation/manager/filterd_or_not.dart';
 import 'features/home/bankTransfers/presentation/manager/image_path_provider_controller.dart';
 import 'features/home/bankTransfers/presentation/manager/is_load_more_in_all_transactions.dart';
 import 'features/home/bankTransfers/presentation/manager/is_loading_add_transaction_provider.dart';
+import 'features/home/bankTransfers/presentation/manager/is_loading_data_not_load_more.dart';
 import 'features/home/dailyBoxes/data/models/data_type_process.dart';
 import 'features/home/dailyBoxes/presentation/manager/providers/commision_controller_in_update_screen_provider.dart';
 import 'features/home/dailyBoxes/presentation/manager/providers/controller_selected_sourse.dart';
@@ -73,7 +74,8 @@ void main() async {
         ChangeNotifierProvider(create: (_)=>EnabledTextFiledsOrNotProvider()),
         ChangeNotifierProvider(create: (_)=>SelectdataListProcessProvider(DataTypeProcess(id: '1', name: 'Initial Process'))),
         ChangeNotifierProvider(create: (_)=>FilterdOrNot()),
-        ChangeNotifierProvider(create: (_)=>IsLoadMoreInAllTransactions())
+        ChangeNotifierProvider(create: (_)=>IsLoadMoreInAllTransactions()),
+        ChangeNotifierProvider(create: (_)=>IsLoadingDataNotLoadMore())
       ],
       child: ExchangeApp(),
     ),

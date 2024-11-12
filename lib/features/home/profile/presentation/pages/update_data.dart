@@ -579,9 +579,9 @@ class _UpdateDataState extends State<UpdateData> {
 
   @override
   void initState() {
-    nameEmployeeTextEditingController = TextEditingController();
+    nameEmployeeTextEditingController = TextEditingController(text:  SharedPrefController().getValue(PrefKeys.nameEmployee.name));
     emailEmployeeTextEditingController = TextEditingController();
-    phoneNumberEmployeeTextEditingController = TextEditingController();
+    phoneNumberEmployeeTextEditingController = TextEditingController(text: SharedPrefController().getValue(PrefKeys.phoneEmployee.name) );
     super.initState();
   }
 
@@ -710,7 +710,7 @@ class _UpdateDataState extends State<UpdateData> {
             TextFieldsUpdatedDataWidget(
               enabled: true,
               controller: nameEmployeeTextEditingController,
-              hintText: SharedPrefController().getValue(PrefKeys.nameEmployee.name) ?? "أحمد صالحة",
+              hintText: SharedPrefController().getValue(PrefKeys.nameEmployee.name) ?? "",
               title: AppStrings.updateData3,
               filledColor: const Color(0XFFEDEDED),
               iconData: Icons.person,
@@ -718,7 +718,7 @@ class _UpdateDataState extends State<UpdateData> {
             TextFieldsUpdatedDataWidget(
               enabled: false,
               controller: emailEmployeeTextEditingController,
-              hintText: SharedPrefController().getValue(PrefKeys.emailEmployee.name) ?? "ahmedsalha130@gmail.com",
+              hintText: SharedPrefController().getValue(PrefKeys.emailEmployee.name) ?? "",
               title: AppStrings.updateData4,
               filledColor: const Color(0XFFEDEDED),
               iconData: Icons.email,
@@ -726,7 +726,7 @@ class _UpdateDataState extends State<UpdateData> {
             TextFieldsUpdatedDataWidget(
               enabled: true,
               controller: phoneNumberEmployeeTextEditingController,
-              hintText: SharedPrefController().getValue(PrefKeys.phoneEmployee.name) ?? "0594323042",
+              hintText: SharedPrefController().getValue(PrefKeys.phoneEmployee.name) ?? "",
               title: AppStrings.updateData5,
               filledColor: const Color(0XFFEDEDED),
               iconData: Icons.phone,

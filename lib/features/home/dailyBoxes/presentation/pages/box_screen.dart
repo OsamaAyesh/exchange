@@ -946,6 +946,7 @@ class _BoxScreenState extends State<BoxScreen> {
                                   increaseAmountController.clear();
                                   amountController.clear();
                                   amountAfterController.clear();
+                                  commissionController.text="0";
                                 });
 
                               },

@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFieldWidget(
                   textEditingController: _emailTextEditingController,
                   iconData: Icons.email,
-                  hintText: AppStrings.loginText3,
+                  hintText: "البريد الإلكتروني",
                   label: AppStrings.loginText2,
                   passwordTextFiled: false,
                 ),
@@ -203,6 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     ProcessResponse processResponse = await LoginApiController().login(
+      context,
       _emailTextEditingController.text,
       _passwordTextEditingController.text,
     );
