@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/currency_model.dart';
 import 'package:http/http.dart' as http;
 class GetCurrenciesController {
-  String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/get-currencies";
+  String urlApi = "${SettingsProvider.mainDomain}/api/v1/employee-api/get-currencies";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   // جلب التوكن من SharedPreferences

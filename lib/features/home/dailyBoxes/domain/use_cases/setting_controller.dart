@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/setting_model.dart';
 class SettingController {
-  final String urlApi = 'https://stage.qudsoffice.com/api/v1/employee-api/settings';
+  final String urlApi = '${SettingsProvider.mainDomain}/api/v1/employee-api/settings';
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   Future<String?> _getToken() async {

@@ -62,6 +62,7 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
   final FocusNode _focusNode = FocusNode();
 
   List<DataTypeProcess> dataListProcess = [
+    DataTypeProcess(id: "0", name: "اختر نوع العملية"),
     DataTypeProcess(id: "1", name: "سحب"),
     DataTypeProcess(id: "2", name: "إيداع"),
     DataTypeProcess(id: "3", name: "سلفة"),
@@ -71,6 +72,7 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
   @override
   void initState() {
     super.initState();
+    Provider.of<SelectdataListProcessProvider>(context,listen: false).newDataTypeProcess=DataTypeProcess(id: "0", name: "اختر نوع العملية");
     _applyFilter();
   }
   @override
@@ -79,16 +81,15 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
     _focusNode.dispose();
     super.dispose();
   }
-
   void _showFilterDialog() {
     status=false;
     status2=false;
-    startDate=null;
-    endDate=null;
-    search=null;
-    sourceId=null;
-    type=null;
-    selectedProcess=null;
+    // startDate=null;
+    // endDate=null;
+    // search=null;
+    // sourceId=null;
+    // type=null;
+    // selectedProcess=null;
     // Provider.of<SelectdataListProcessProvider>(context).newDataTypeProcess=null;
     final TextEditingController _startDateController =
     TextEditingController(text: startDate);
@@ -100,10 +101,10 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
     // This Part Date
     DateTime? selectedStartDate;
     DateTime? selectedEndDate;
-    final ValueNotifier<String> _startDateTextValue =
-    ValueNotifier<String>("قم باختيار تاريخ البدء");
-    final ValueNotifier<String> _endDateTextValue =
-    ValueNotifier<String>("قم باختيار تاريخ الانتهاء");
+    final ValueNotifier<String> _startDateTextValue = ValueNotifier<String>(
+        startDate == null ? "تاريخ البدء" : "$startDate");
+    final ValueNotifier<String> _endDateTextValue = ValueNotifier<String>(
+        endDate == null ? "تاريخ الانتهاء" : "$endDate");
 
     Future<void> _selectStartDate(BuildContext context) async {
       final DateTime? pickedDate = await showDatePicker(
@@ -231,34 +232,67 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
                       height: ScreenUtilNew.height(16),
                     ),
                     // Search Input Field
-                    Container(
-                      height: ScreenUtilNew.height(52),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color:AppColors.primaryColor.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(5.r),
-                      ),
-                      child: TextField(
-                        controller: _searchController,
-                        textDirection: ui.TextDirection.rtl,
-                        decoration: InputDecoration(
-                          hintTextDirection: ui.TextDirection.rtl,
-                          hintText: "البحث",
-                          hintStyle: GoogleFonts.cairo(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16.sp,
-                            color: AppColors.primaryColor,
-                          ),
-                          contentPadding: EdgeInsets.only(left: ScreenUtilNew.width(8),right: ScreenUtilNew.width(8)),
-                          border: InputBorder.none,
+                    TextField(
+                      controller: _searchController,
+                      textDirection: ui.TextDirection.rtl,
+                      onChanged: (value) => search = value,
+                      decoration: InputDecoration(
+                        fillColor: AppColors.primaryColor.withOpacity(0.08),
+                        filled: true,
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.r),
+                            borderSide: BorderSide.none
                         ),
-                        style: GoogleFonts.cairo(
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.r),
+                            borderSide: BorderSide.none
+                        ),
+                        hintTextDirection: ui.TextDirection.rtl,
+                        hintText: "البحث",
+                        hintStyle: GoogleFonts.cairo(
                           fontWeight: FontWeight.w400,
                           fontSize: 16.sp,
                           color: AppColors.primaryColor,
                         ),
+                        contentPadding: EdgeInsets.only(
+                            left: ScreenUtilNew.width(8),
+                            right: ScreenUtilNew.width(8)),
+                        border: InputBorder.none,
+                      ),
+                      style: GoogleFonts.cairo(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp,
+                        color: AppColors.primaryColor,
                       ),
                     ),
+                    // Container(
+                    //   height: ScreenUtilNew.height(52),
+                    //   width: double.infinity,
+                    //   decoration: BoxDecoration(
+                    //     color:AppColors.primaryColor.withOpacity(0.08),
+                    //   borderRadius: BorderRadius.circular(5.r),
+                    //   ),
+                    //   child: TextField(
+                    //     controller: _searchController,
+                    //     textDirection: ui.TextDirection.rtl,
+                    //     decoration: InputDecoration(
+                    //       hintTextDirection: ui.TextDirection.rtl,
+                    //       hintText: "البحث",
+                    //       hintStyle: GoogleFonts.cairo(
+                    //         fontWeight: FontWeight.w400,
+                    //         fontSize: 16.sp,
+                    //         color: AppColors.primaryColor,
+                    //       ),
+                    //       contentPadding: EdgeInsets.only(left: ScreenUtilNew.width(8),right: ScreenUtilNew.width(8)),
+                    //       border: InputBorder.none,
+                    //     ),
+                    //     style: GoogleFonts.cairo(
+                    //       fontWeight: FontWeight.w400,
+                    //       fontSize: 16.sp,
+                    //       color: AppColors.primaryColor,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: ScreenUtilNew.height(16),),
@@ -304,7 +338,8 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
                           ),
                         );
                       } else {
-                        List<DataSources> options = snapshot.data!;
+                        List<DataSources> options=[DataSources(id: 0,name: "اختر المصدر...")];
+                         options.addAll(snapshot.data!);
                         return SizedBox(
                           width: double.infinity,
                           child: DropDownFilterSource(
@@ -312,9 +347,13 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
                             textTitle: "المصدر أو المستفيد",
                             selectedValueString: "",
                             onChanged: (selectedAccount) {
-                              sourceId="${selectedAccount!.id}";
+                              if(selectedAccount!.id!=0){
+                                sourceId="${selectedAccount.id}";
+                              }else{
+                                sourceId=null;
+                              }
                             },
-                            selectDefaultValue: 0,
+                            selectDefaultValue: int.tryParse(sourceId??"0")??0,
                           ),
                         );
                       }
@@ -329,7 +368,13 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
                       status=true;
                       if(status){
                         setState(() {
-                          type=provider.dataTypeProcess.id;
+                          if(provider.dataTypeProcess.id!="0"){
+                            type=provider.dataTypeProcess.id;
+                            print(type);
+                          }else{
+                            type=null;
+                            print(type);
+                          }
                         });
                       }
                     },
@@ -654,29 +699,75 @@ class _DetailsBoxScreenState extends State<DetailsBoxScreen>
                                       listen: false)
                                       .nameServiceNew =
                                       transaction.serviceName ?? "لا يوجد";
-                                  Navigator.of(context).push(
-                                    PageAnimationTransition(
-                                      page: UpdateProcess(
-                                        numberProcess:
-                                        transaction.number ?? "لا يوجد",
-                                        sourceId: transaction.sourceId ?? 0,
-                                        commission: transaction.commission ?? "0",
-                                        amount: transaction.amount ?? "0",
-                                        increaseAmount:
-                                        transaction.increaseAmount ?? "0",
-                                        total: transaction.total ?? "0",
-                                        notes: transaction.notes ?? "لا يوجد",
-                                        idBox: widget.idBox,
-                                        serviceName:
-                                        transaction.serviceName ?? "لا يوجد",
-                                        id: transaction.id ?? 0,
-                                        typeName: transaction.typeName ?? "لا يوجد",
-                                        typeId: transaction.type ?? 0,
-                                        boxName: widget.nameBox, commissionid: transaction.commissionId,
-                                      ),
-                                      pageAnimationType: RightToLeftTransition(),
-                                    ),
-                                  );
+                                  // if(transaction.type != 4){
+                                  //   context.showSnackBar(message: "لا يمكن تعديل عملية مكتملة", erorr: true);
+                                  // }else{
+                                    Future<bool> isSourceAvailable(int id, String sourceName) async {
+                                      List<DataSources>? sources = await ApiControllerSourcesBox().fetchData(id);
+                                      if (sources == null || sources.isEmpty) {
+                                        print('No data found or an error occurred.');
+                                        return false;
+                                      }
+                                      bool sourceExists = sources.any((source) => source.name== sourceName);
+                                      if (sourceExists) {
+                                        Navigator.of(context).push(PageAnimationTransition(
+                                          page: UpdateProcess(
+                                            numberProcess:
+                                            transaction.number ?? "لا يوجد",
+                                            sourceId: transaction.sourceId ?? 0,
+                                            commission: transaction.commission ?? "0",
+                                            amount: transaction.amount ?? "0",
+                                            increaseAmount:
+                                            transaction.increaseAmount ?? "0",
+                                            total: transaction.total ?? "0",
+                                            notes: transaction.notes ?? "لا يوجد",
+                                            idBox: widget.idBox,
+                                            serviceName:
+                                            transaction.serviceName ?? "لا يوجد",
+                                            id: transaction.id ?? 0,
+                                            typeName: transaction.typeName ?? "لا يوجد",
+                                            typeId: transaction.type ?? 0,
+                                            boxName: widget.nameBox, commissionid: transaction.commissionId,
+                                          ),
+                                          pageAnimationType: RightToLeftTransition(),
+                                        ));
+                                        print('Source "$sourceName" exists.');
+                                        return true;
+                                      } else {
+                                        context.showSnackBar(message: "المصدر غير مفعل",erorr: true);
+                                        print('Source "$sourceName" does not exist.');
+                                        return false;
+                                      }
+                                    }
+                                    isSourceAvailable(widget.idBox,transaction.sourceName!);
+                                  // }
+
+                                  // transaction.type != 4
+                                  //     ? context.showSnackBar(message: "لا يمكن تعديل عملية مكتملة", erorr: true)
+                                  //     : Navigator.of(context).push(
+                                  //   PageAnimationTransition(
+                                  //     page: UpdateProcess(
+                                  //       numberProcess:
+                                  //       transaction.number ?? "لا يوجد",
+                                  //       sourceId: transaction.sourceId ?? 0,
+                                  //       commission: transaction.commission ?? "0",
+                                  //       amount: transaction.amount ?? "0",
+                                  //       increaseAmount:
+                                  //       transaction.increaseAmount ?? "0",
+                                  //       total: transaction.total ?? "0",
+                                  //       notes: transaction.notes ?? "لا يوجد",
+                                  //       idBox: widget.idBox,
+                                  //       serviceName:
+                                  //       transaction.serviceName ?? "لا يوجد",
+                                  //       id: transaction.id ?? 0,
+                                  //       typeName: transaction.typeName ?? "لا يوجد",
+                                  //       typeId: transaction.type ?? 0,
+                                  //       boxName: widget.nameBox, commissionid: transaction.commissionId,
+                                  //     ),
+                                  //     pageAnimationType: RightToLeftTransition(),
+                                  //   ),
+                                  // );
+                                 
                                 },
                                 backgroundColor:
                                 AppColors.primaryColor.withOpacity(0.08),

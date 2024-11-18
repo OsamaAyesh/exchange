@@ -65,7 +65,7 @@ class _DropDownWidgetTextFieldState extends State<DropDownWidgetTextFieldAccount
                 isExpanded: true,
                 value: selectedAccount,
                 icon: const Icon(Icons.keyboard_arrow_down,
-                    color: AppColors.primaryColor, size: 24),
+                    color: Colors.black, size: 24),
                 dropdownColor: Colors.white,
                 onChanged: (AccountModel? newValue) {
                   if (newValue != null) {
@@ -84,7 +84,7 @@ class _DropDownWidgetTextFieldState extends State<DropDownWidgetTextFieldAccount
                       style: GoogleFonts.cairo(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor),
+                          color: Colors.black),
                     ),
                   );
                 }).toList(),

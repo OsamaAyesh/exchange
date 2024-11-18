@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../../core/settings_provider.dart';
 import '../../data/models/get_sources_controller.dart';
 
 class ApiControllerSourcesBox {
   // Base URL without صندوقId
   final String baseUrl =
-      'https://stage.qudsoffice.com/api/v1/employee-api/get-sources/';
+      '${SettingsProvider.mainDomain}/api/v1/employee-api/get-sources/';
 
   // Function to get the token from SharedPreferences
   Future<String?> _getToken() async {

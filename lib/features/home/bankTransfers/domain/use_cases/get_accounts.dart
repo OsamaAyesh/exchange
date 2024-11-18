@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/account_model.dart';
 
 class GetAccounts {
-  String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/get-accounts";
+  String urlApi = "${SettingsProvider.mainDomain}/api/v1/employee-api/get-accounts";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   // جلب التوكن من SharedPreferences

@@ -176,9 +176,9 @@ class _UpdatePasswordState extends State<UpdatePassword> {
     } else {
       // في حالة الفشل، يمكن عرض رسالة خطأ أيضًا
       // context.showSnackBar(message: result!.message ?? "",erorr: true);
-      oldPasswordTextEditingController.clear();
-      newPasswordTextEditingController.clear();
-      confirmPasswordTextEditingController.clear();
+      // oldPasswordTextEditingController.clear();
+      // newPasswordTextEditingController.clear();
+      // confirmPasswordTextEditingController.clear();
     }
   }
 }

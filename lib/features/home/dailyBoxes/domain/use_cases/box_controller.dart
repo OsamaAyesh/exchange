@@ -2,9 +2,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import '../../../../../core/settings_provider.dart';
 import '../../data/models/box.dart';
 class ApiBoxController{
-  String apiUrl="https://stage.qudsoffice.com/api/v1/employee-api/get-boxes/";
+  String apiUrl="${SettingsProvider.mainDomain}/api/v1/employee-api/get-boxes/";
   Future<String?> _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('token'); // احصل على التوكن من SharedPreferences

@@ -2,8 +2,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import '../../../../../core/settings_provider.dart';
+
 class ConfirmApiProcessController {
-  String confirmTransactionUrl = "https://stage.qudsoffice.com/api/v1/employee-api/confirm-transaction"; // عنوان API لتأكيد المعاملة
+  String confirmTransactionUrl = "${SettingsProvider.mainDomain}/api/v1/employee-api/confirm-transaction"; // عنوان API لتأكيد المعاملة
 
   Future<String?> _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

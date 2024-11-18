@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart'as http;
 import 'package:provider/provider.dart';
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/attendance_model.dart';
 import '../../presentation/manager/data_extra_model_provider.dart';
 class AttendanceController {
-  String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/get-attendance";
+  String urlApi = "${SettingsProvider.mainDomain}/api/v1/employee-api/get-attendance";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   // جلب التوكن من SharedPreferences

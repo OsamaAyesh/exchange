@@ -2,6 +2,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import '../../../../../core/settings_provider.dart';
+
 class ApiCommissionById {
   Future<String?> _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -11,7 +13,7 @@ class ApiCommissionById {
   Future<void> fetchCommissionData(int commissionId) async {
     // بناء عنوان URL
     final String url =
-        'https://stage.qudsoffice.com/api/v1/employee-api/get-services-commissions/$commissionId';
+        '${SettingsProvider.mainDomain}/api/v1/employee-api/get-services-commissions/$commissionId';
 
     String? token = await _getToken(); // جلب التوكن
 

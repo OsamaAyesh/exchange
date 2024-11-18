@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../../core/settings_provider.dart';
 import '../../data/models/update_password_model.dart';
 
 class ApiControllerUpdatePassword {
   String urlApi =
-      "https://stage.qudsoffice.com/api/v1/employee-api/update-password";
+      "${SettingsProvider.mainDomain}/api/v1/employee-api/update-password";
 
   Future<String?> _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -13,13 +13,15 @@ class DropDownWidgetTextFieldCurrency extends StatefulWidget {
   final String selectedValueString;
   final double width;
   int selectid;
+  bool updated;
    DropDownWidgetTextFieldCurrency({   super.key,
     required this.textTitle,
     required this.options,
     required this.onChanged,
     required this.selectedValueString,
     required this.width,
-    required this.selectid
+    required this.selectid,
+     required this.updated
 });
 
   @override
@@ -32,19 +34,26 @@ class _DropDownWidgetTextFieldCurrencyState extends State<DropDownWidgetTextFiel
   @override
   void initState() {
     super.initState();
-
-    // تعيين القيمة الابتدائية بناءً على القيمة المحددة
+    if(widget.updated){
+      selectedAccount = widget.options.firstWhere(
+            (option) => option.currency != null && option.currency!.contains(widget.selectedValueString),
+        orElse: () => widget.options[0],
+      );
+      for (var option in widget.options) {
+        print(option.currency); // للتحقق من القيم الفعلية لـ option.name
+      }
+    }else{
+      selectedAccount = widget.options.firstWhere(
+            (option) => option.id == widget.selectid,
+        orElse: () => widget.options[0],
+      );
+    }
+    // // تعيين القيمة الابتدائية بناءً على القيمة المحددة
     // selectedAccount = widget.options.firstWhere(
     //       (option) => option.name == widget.selectedValueString,
     //   orElse: () => widget.options[0],
     // );
-    selectedAccount = widget.options.firstWhere(
-          (option) => option.currency != null && option.currency!.contains(widget.selectedValueString),
-      orElse: () => widget.options[0],
-    );
-    for (var option in widget.options) {
-      print(option.currency); // للتحقق من القيم الفعلية لـ option.name
-    }
+
 
   }
 
@@ -80,7 +89,7 @@ class _DropDownWidgetTextFieldCurrencyState extends State<DropDownWidgetTextFiel
                 isExpanded: true,
                 value: selectedAccount,
                 icon: const Icon(Icons.keyboard_arrow_down,
-                    color: AppColors.primaryColor, size: 24),
+                    color: Colors.black, size: 24),
                 dropdownColor: Colors.white,
                 onChanged: (CurrencyModel? newValue) {
                   if (newValue != null) {
@@ -95,11 +104,11 @@ class _DropDownWidgetTextFieldCurrencyState extends State<DropDownWidgetTextFiel
                     alignment: Alignment.centerRight,
                     value: item,
                     child: Text(
-                        "${item.currency}-${item.name}",
+                        "${item.currency??""}-${item.name}",
                       style: GoogleFonts.cairo(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor),
+                          color: Colors.black),
                     ),
                   );
                 }).toList(),

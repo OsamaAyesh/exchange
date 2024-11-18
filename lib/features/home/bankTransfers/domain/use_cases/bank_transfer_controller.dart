@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/bank_transfer_model.dart';
 import 'package:http/http.dart' as http;
@@ -21,8 +22,8 @@ class BankTransferController {
     String? userId,
   }) async {
     String urlApi =
-        "https://stage.qudsoffice.com/api/v1/employee-api/bank-transfer";
-    // "https://stage.qudsoffice.com/api/v1/employee-api/bank-transfer?page=$page";
+        "${SettingsProvider.mainDomain}/api/v1/employee-api/bank-transfer";
+    // "${SettingsProvider.mainDomain}/api/v1/employee-api/bank-transfer?page=$page";
 
     String? token = await _getToken();
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/notfication_model.dart';
 
@@ -15,7 +16,7 @@ class GetNotificationController {
   // Fetch notifications with optional pagination
   Future<List<NotificationModel>?> fetchNotifications(int page, {int readable = 1}) async {
     print("NUMBER 1");
-    String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/get-notification-all?page=$page&readable=$readable";
+    String urlApi = "${SettingsProvider.mainDomain}/api/v1/employee-api/get-notification-all?page=$page&readable=$readable";
     String? token = await _getToken();
     print("NUMBER 2");
 
@@ -54,7 +55,7 @@ class GetNotificationController {
   // Mark notification as read
 // Mark notification as read
   Future<void> markAsRead(String notificationId) async {
-    String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/read-notification"; // تحديث الرابط هنا
+    String urlApi = "${SettingsProvider.mainDomain}/api/v1/employee-api/read-notification"; // تحديث الرابط هنا
     String? token = await _getToken();
 
     if (token == null) {

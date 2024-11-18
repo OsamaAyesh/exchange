@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:exchange/features/home/bankTransfers/presentation/manager/message_transaction_add.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import 'package:http/http.dart' as http;
 
 class StoreTransferControllerApi {
-  final String baseUrl = 'https://stage.qudsoffice.com/api/v1/employee-api/bank-transfer';
+  final String baseUrl = '${SettingsProvider.mainDomain}/api/v1/employee-api/bank-transfer';
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   Future<String?> _getToken() async {

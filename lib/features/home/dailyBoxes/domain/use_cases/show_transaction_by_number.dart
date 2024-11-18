@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/show_transaction_model.dart';
 
 class ShowTransactionByNumber {
-  String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/get-transaction-number/";
+  String urlApi = "${SettingsProvider.mainDomain}/api/v1/employee-api/get-transaction-number/";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   Future<String?> _getToken() async {

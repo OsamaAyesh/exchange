@@ -3,10 +3,11 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/beneficiarie_model.dart';
 class GetBeneficiaries {
-  String urlApi="https://stage.qudsoffice.com/api/v1/employee-api/get-beneficiaries";
+  String urlApi="${SettingsProvider.mainDomain}/api/v1/employee-api/get-beneficiaries";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   // جلب التوكن من SharedPreferences

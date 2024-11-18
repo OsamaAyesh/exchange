@@ -1,4 +1,6 @@
 
+import 'package:exchange/features/splash/presentation/pages/maintinance_screen.dart';
+
 import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/home/bankTransfers/presentation/pages/add_transaction_new_screen.dart';
 import '../../features/home/bankTransfers/presentation/pages/all_transactions_screen.dart';
@@ -38,7 +40,7 @@ class Routes{
   static const String addTransactionNewScreen="/add_transaction_new_screen";
   static const String allTransactionScreen="/all_transaction_new_screen";
   static const String updateTransactionScreen="/update_transaction-screen";
-
+  static const String maintenanceScreen="/maintinance_screen";
 
 }
 final routes={
@@ -58,7 +60,7 @@ final routes={
   Routes.updateDataScreen:(context)=> const UpdateData(),
   Routes.updatePassword:(context)=>const UpdatePassword(),
   Routes.addTransactionNewScreen:(context)=>const AddTransactionNewScreen(),
-  Routes.allTransactionScreen:(context)=> AllTransactionsScreen(),
-  Routes.updateTransactionScreen:(context)=> UpdateTransactionBank(refNumberController: '', accountIdController: 0, userIdController: 0, nameReceiveController: '', dateController: '', amountController: '', currencyController: '', notesController: "", imagePath: '', id: '',)
-
+  Routes.allTransactionScreen:(context)=> const AllTransactionsScreen(),
+  Routes.updateTransactionScreen:(context)=> UpdateTransactionBank(refNumberController: '', accountIdController: 0, userIdController: 0, nameReceiveController: '', dateController: '', amountController: '', currencyController: '', notesController: "", imagePath: '', id: '',),
+  Routes.maintenanceScreen:(context)=> MaintenanceScreen(),
 };

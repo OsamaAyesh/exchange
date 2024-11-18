@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'dart:convert';
 
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/salary_model.dart';
 
@@ -22,7 +23,7 @@ class GetSalary {
       throw Exception("Token is not available");
     }
 
-    String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/get-salary?page=$page";
+    String urlApi = "${SettingsProvider.mainDomain}/api/v1/employee-api/get-salary?page=$page";
 
     // إنشاء كائن الفلترة بناءً على المعطيات المتاحة
     Map<String, dynamic> filter = {};

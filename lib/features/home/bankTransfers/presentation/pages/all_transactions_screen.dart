@@ -377,6 +377,7 @@
 //
 
 import 'package:exchange/core/utils/app_colors.dart';
+import 'package:exchange/core/utils/context_extension.dart';
 import 'package:exchange/features/home/bankTransfers/data/models/bank_transfer_model.dart';
 import 'package:exchange/features/home/bankTransfers/domain/use_cases/get_accounts.dart';
 import 'package:exchange/features/home/bankTransfers/presentation/manager/is_load_more_in_all_transactions.dart';
@@ -428,6 +429,9 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
   String? currentAccountId;
   String? currentUserId;
   int page = 1;
+  late TextEditingController _startDateController;
+  late TextEditingController _endDateController ;
+  late TextEditingController _searchController ;
 
   // bool filtred = false;
 
@@ -440,6 +444,14 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
     _scrollController = ScrollController();
     _scrollController.addListener(
         _scrollListener); // Add a listener to the scroll controller
+    _startDateController= TextEditingController();
+    _endDateController = TextEditingController();
+    _searchController = TextEditingController();
+    currentStartDate=null;
+    currentEndDate=null;
+    currentSearch=null;
+    currentAccountId=null;
+    currentUserId=null;
     _fetchInitialData(); // Fetch initial data when the screen loads
   }
 
@@ -450,22 +462,20 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
   }
 
   Widget dialogFilter() {
-    currentStartDate = null;
-    currentEndDate = null;
-    currentSearch = null;
-    currentAccountId = null;
-    currentUserId = null;
-    final TextEditingController _startDateController = TextEditingController();
-    final TextEditingController _endDateController = TextEditingController();
-    final TextEditingController _searchController = TextEditingController();
+    // currentStartDate = null;
+    // currentEndDate = null;
+    // currentSearch = null;
+    // currentAccountId = null;
+    // currentUserId = null;
+
 
     // This Part Date
     DateTime? selectedStartDate;
     DateTime? selectedEndDate;
-    final ValueNotifier<String> _startDateTextValue =
-        ValueNotifier<String>("قم باختيار تاريخ البدء");
-    final ValueNotifier<String> _endDateTextValue =
-        ValueNotifier<String>("قم باختيار تاريخ الانتهاء");
+    final ValueNotifier<String> _startDateTextValue = ValueNotifier<String>(
+        currentStartDate == null ? "تاريخ البدء" : "$currentStartDate");
+    final ValueNotifier<String> _endDateTextValue = ValueNotifier<String>(
+        currentEndDate == null ? "تاريخ الانتهاء" : "$currentEndDate");
 
     Future<void> _selectStartDate(BuildContext context) async {
       final DateTime? pickedDate = await showDatePicker(
@@ -560,11 +570,9 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
       content: SingleChildScrollView(
         child: Column(
           children: [
-            // Add input fields for start date, end date, search, account ID, and user ID
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Start Date Input Field
                 _buildInputField(
                   labelText: "Start Date",
                   controller: _startDateController,
@@ -582,7 +590,6 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                   controller: _endDateController,
                   onTap: () {
                     _selectEndDate(context);
-                    // selectedEndDate=_endDateController.text;
                     print(selectedEndDate);
                   },
                   textValueNotifier: _endDateTextValue,
@@ -590,36 +597,37 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                 SizedBox(
                   height: ScreenUtilNew.height(16),
                 ),
-                // Search Input Field
-                Container(
-                  height: ScreenUtilNew.height(52),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(5.r),
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    textDirection: ui.TextDirection.rtl,
-                    onChanged: (value) => currentSearch = value,
-                    decoration: InputDecoration(
-                      hintTextDirection: ui.TextDirection.rtl,
-                      hintText: "البحث",
-                      hintStyle: GoogleFonts.cairo(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16.sp,
-                        color: AppColors.primaryColor,
-                      ),
-                      contentPadding: EdgeInsets.only(
-                          left: ScreenUtilNew.width(8),
-                          right: ScreenUtilNew.width(8)),
-                      border: InputBorder.none,
+                TextField(
+                  controller: _searchController,
+                  textDirection: ui.TextDirection.rtl,
+                  onChanged: (value) => currentSearch = value,
+                  decoration: InputDecoration(
+                    fillColor: AppColors.primaryColor.withOpacity(0.08),
+                    filled: true,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.r),
+                        borderSide: BorderSide.none
                     ),
-                    style: GoogleFonts.cairo(
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.r),
+                      borderSide: BorderSide.none
+                    ),
+                    hintTextDirection: ui.TextDirection.rtl,
+                    hintText: "البحث",
+                    hintStyle: GoogleFonts.cairo(
                       fontWeight: FontWeight.w400,
                       fontSize: 16.sp,
                       color: AppColors.primaryColor,
                     ),
+                    contentPadding: EdgeInsets.only(
+                        left: ScreenUtilNew.width(8),
+                        right: ScreenUtilNew.width(8)),
+                    border: InputBorder.none,
+                  ),
+                  style: GoogleFonts.cairo(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16.sp,
+                    color: AppColors.primaryColor,
                   ),
                 ),
               ],
@@ -696,7 +704,8 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                       ),
                     );
                   } else {
-                    List<AccountModel> options = snapshot.data!;
+                    List<AccountModel> options=[AccountModel(id: 0, name: "اختر المحول...", status: 1)];
+                    options.addAll(snapshot.data!);
                     return SizedBox(
                       width: double.infinity,
                       child: DropDownGetAccountsFilter(
@@ -704,9 +713,14 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                         textTitle: "المصدر أو المستفيد",
                         selectedValueString: "",
                         onChanged: (selectedAccount) {
-                          currentAccountId = "${selectedAccount!.id}";
+                           if(selectedAccount!.id!=0){
+                             currentAccountId = "${selectedAccount!.id}";
+                           }else{
+                             currentAccountId=null;
+                           }
+
                         },
-                        selectDefaultValue: 0,
+                        selectDefaultValue: int.tryParse("$currentAccountId")??0,
                       ),
                     );
                   }
@@ -757,16 +771,22 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                     width: ScreenUtilNew.width(160),
                   );
                 } else {
-                  List<BeneficiarieModel> options = snapshot.data!;
+                  List<BeneficiarieModel> options=[BeneficiarieModel(id: 0, name: "اختر المستفيد...",)];
+                  options.addAll(snapshot.data!);
+                  // List<BeneficiarieModel> options = snapshot.data!;
                   return DropDownWidgetGetUsersFilter(
                     width: double.infinity,
                     options: options,
                     textTitle: AppStrings.addNewTransication7,
                     selectedValueString: '',
                     onChanged: (selectedAccount) {
-                      currentUserId = "${selectedAccount!.id}";
+                      if(selectedAccount!.id!=0){
+                        currentUserId = "${selectedAccount!.id}";
+                      }else{
+                        currentUserId=null;
+                      }
                     },
-                    defaultValueId: 0,
+                    defaultValueId: int.tryParse("$currentUserId")??0,
                   );
                 }
               },
@@ -1177,44 +1197,49 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                                       ],
                                     ),
                                     endActionPane: ActionPane(
-                                      motion: ScrollMotion(),
+                                      motion: const ScrollMotion(),
                                       children: [
                                         SlidableAction(
                                           onPressed: (value) {
-                                            Navigator.of(context).push(
-                                                PageAnimationTransition(
-                                                    page: UpdateTransactionBank(
-                                                      refNumberController:
-                                                          bankTransfers[index]
-                                                              .refNumber!,
-                                                      accountIdController:
-                                                          bankTransfers[index]
-                                                              .accountId!,
-                                                      userIdController:
-                                                          bankTransfers[index]
-                                                              .userId!,
-                                                      nameReceiveController:
-                                                          bankTransfers[index]
-                                                              .nameReceive!,
-                                                      dateController:
-                                                          bankTransfers[index]
-                                                              .date!,
-                                                      amountController:
-                                                          bankTransfers[index]
-                                                              .amount!,
-                                                      currencyController:
-                                                          bankTransfers[index]
-                                                              .currency!,
-                                                      notesController:
-                                                          bankTransfers[index]
-                                                              .notes!,
-                                                      imagePath:
-                                                          bankTransfers[index]
-                                                              .image!,
-                                                      id: "${bankTransfers[index].id!}",
-                                                    ),
-                                                    pageAnimationType:
-                                                        LeftToRightTransition()));
+                                            if( bankTransfers[index].status!=2){
+                                              Navigator.of(context).push(
+                                                  PageAnimationTransition(
+                                                      page: UpdateTransactionBank(
+                                                        refNumberController:
+                                                        bankTransfers[index]
+                                                            .refNumber!,
+                                                        accountIdController:
+                                                        bankTransfers[index]
+                                                            .accountId!,
+                                                        userIdController:
+                                                        bankTransfers[index]
+                                                            .userId!,
+                                                        nameReceiveController:
+                                                        bankTransfers[index]
+                                                            .nameReceive!,
+                                                        dateController:
+                                                        bankTransfers[index]
+                                                            .date!,
+                                                        amountController:
+                                                        bankTransfers[index]
+                                                            .amount!,
+                                                        currencyController:
+                                                        bankTransfers[index]
+                                                            .currency!,
+                                                        notesController:
+                                                        bankTransfers[index]
+                                                            .notes!,
+                                                        imagePath:
+                                                        bankTransfers[index]
+                                                            .image!,
+                                                        id: "${bankTransfers[index].id!}",
+                                                      ),
+                                                      pageAnimationType:
+                                                      LeftToRightTransition()));
+                                            }else{
+                                              context.showSnackBar(message: "لا يمكن التعديل على عملية مكتملة",erorr: true);
+                                            }
+
                                           },
                                           backgroundColor: AppColors
                                               .primaryColor

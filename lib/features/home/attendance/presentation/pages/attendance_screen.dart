@@ -40,8 +40,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         DateTime? selectedStartDate;
         DateTime? selectedEndDate;
-        final ValueNotifier<String> _startDateTextValue = ValueNotifier<String>("قم باختيار تاريخ البدء");
-        final ValueNotifier<String> _endDateTextValue = ValueNotifier<String>("قم باختيار تاريخ الانتهاء");
+        final ValueNotifier<String> _startDateTextValue = ValueNotifier<String>(startDate==null?"تاريخ البدء":"$startDate");
+        final ValueNotifier<String> _endDateTextValue = ValueNotifier<String>(endDate==null?"تاريخ الانتهاء":"$endDate");
 
         Future<void> _selectStartDate(BuildContext context) async {
           final DateTime? pickedDate = await showDatePicker(

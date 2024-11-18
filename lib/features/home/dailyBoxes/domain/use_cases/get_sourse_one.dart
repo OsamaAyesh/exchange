@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../../core/settings_provider.dart';
 import '../../data/models/get_sources_controller.dart';
 import '../../presentation/manager/providers/controller_selected_sourse.dart';
 
@@ -11,7 +12,7 @@ class SourceRepositoryOne {
   }
 
   Future<DataSources?> fetchSourceById(int boxId, int sourceId) async {
-    final String url = 'https://stage.qudsoffice.com/api/v1/employee-api/get-sources/$boxId';
+    final String url = '${SettingsProvider.mainDomain}/api/v1/employee-api/get-sources/$boxId';
     String? token = await _getToken(); // جلب التوكن
 
     if (token == null) {

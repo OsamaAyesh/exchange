@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:exchange/features/auth/data/models/employee.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../../../auth/data/data_sources/api_helper.dart';
 import '../../../../auth/data/data_sources/api_settings.dart';
@@ -18,7 +19,7 @@ class LogoutApiController with ApiHelper {
       return ProcessResponse("Token not found. Please login again.", false);
     }
 
-    Uri uri = Uri.parse("https://stage.qudsoffice.com/api/v1/employee-api/logout");
+    Uri uri = Uri.parse("${SettingsProvider.mainDomain}/api/v1/employee-api/logout");
 
     // Prepare the body with the token, because the API expects form-data
     var body = {

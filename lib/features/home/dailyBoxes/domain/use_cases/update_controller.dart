@@ -5,12 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart'as http;
+import 'package:page_animation_transition/animations/bottom_to_top_faded_transition.dart';
+import 'package:page_animation_transition/page_animation_transition.dart';
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../../../../core/utils/assets_manger.dart';
 import '../../../../../core/utils/screen_util_new.dart';
 import '../../data/models/show_transaction_model.dart';
+import '../../presentation/pages/details_box_screen.dart';
 class UpdateController {
-  String apiUrl = "https://stage.qudsoffice.com/api/v1/employee-api/daily-fund-transaction/";
+  String apiUrl = "${SettingsProvider.mainDomain}/api/v1/employee-api/daily-fund-transaction/";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   // جلب التوكن من SharedPreferences
@@ -19,6 +23,8 @@ class UpdateController {
   }
   Future<DailyFundTransactionResponse?> updateProcess({
     required BuildContext context,
+    required int idBox,
+    required String boxName,
     required int idProcess,
      required int sourceId,
      String? commissionId,
@@ -80,6 +86,17 @@ class UpdateController {
         // Future.delayed(const Duration(milliseconds: 1200),(){
         //   Navigator.pop(context);
         // });
+        Future.delayed(Duration(milliseconds: 1300), () {
+          // Navigator.pushReplacement(context, DetailsBoxScreen(idBox: idBox, nameBox: nameBox))
+          Navigator.pop(context);
+          Navigator.of(context).push(
+              PageAnimationTransition(
+                  page: DetailsBoxScreen(
+                      idBox: idBox,
+                      nameBox: boxName),
+                  pageAnimationType:
+                  BottomToTopFadedTransition()));
+        });
         return DailyFundTransactionResponse.fromJson(jsonResponse);
       } else {
         context.showSnackBar(

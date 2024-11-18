@@ -1,17 +1,20 @@
 import 'package:exchange/core/utils/context_extension.dart';
 import 'package:exchange/features/home/dailyBoxes/data/models/success_process_response.dart';
+import 'package:exchange/features/home/dailyBoxes/presentation/manager/providers/transactions_true.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:convert';
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../../../../core/utils/assets_manger.dart';
 import '../../../../../core/utils/screen_util_new.dart';
 import '../../data/models/transaction_model_response.dart';
 
 class ApiControllerDailyFundTransaction {
-  String apiUrl = "https://stage.qudsoffice.com/api/v1/employee-api/daily-fund-transaction";
+  String apiUrl = "${SettingsProvider.mainDomain}/api/v1/employee-api/daily-fund-transaction";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   // جلب التوكن من SharedPreferences
@@ -67,11 +70,14 @@ class ApiControllerDailyFundTransaction {
       if (response.statusCode == 200 && jsonResponse['status'] == 200) {
         print('Response: $jsonResponse'); // طباعة محتوى الاستجابة
         _settingModalBottomSheet(context);
+        Provider.of<TransactionsTrue>(context, listen: false).newValueTransactionTrue = true;
+        print("${Provider.of<TransactionsTrue>(context, listen: false).transactionTrue}");
         Future.delayed(const Duration(milliseconds: 1200),(){
           Navigator.pop(context);
         });
         return DailyFundTransactionResponse.fromJson(jsonResponse);
       } else {
+        Provider.of<TransactionsTrue>(context,listen: false).newValueTransactionTrue=false;
         context.showSnackBar(
             message: 'Failed to post transaction: ${response.statusCode}, Response: $jsonResponse',
             erorr: true);

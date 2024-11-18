@@ -99,9 +99,9 @@ class _SalaryPageState extends State<SalaryPage> {
         DateTime? selectedStartDate;
         DateTime? selectedEndDate;
         final ValueNotifier<String> _startDateTextValue =
-            ValueNotifier<String>("قم باختيار تاريخ البدء");
+            ValueNotifier<String>(startDate==null?"تاريخ البدء":"$startDate");
         final ValueNotifier<String> _endDateTextValue =
-            ValueNotifier<String>("قم باختيار تاريخ الانتهاء");
+            ValueNotifier<String>(endDate==null?"تاريخ الانتهاء":"$endDate");
 
         Future<void> _selectStartDate(BuildContext context) async {
           final DateTime? pickedDate = await showDatePicker(
@@ -220,34 +220,68 @@ class _SalaryPageState extends State<SalaryPage> {
                 height: ScreenUtilNew.height(16),
               ),
               // Search Input Field
-              Container(
-                height: ScreenUtilNew.height(52),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: const Color(0XFFEBF7F1),
-                  borderRadius: BorderRadius.circular(5.r),
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  textDirection: ui.TextDirection.rtl,
-                  decoration: InputDecoration(
-                    hintTextDirection: ui.TextDirection.rtl,
-                    hintText: "البحث",
-                    hintStyle: GoogleFonts.cairo(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16.sp,
-                      color: AppColors.primaryColor,
-                    ),
-                    contentPadding: EdgeInsets.only(left: 8.0),
-                    border: InputBorder.none,
+              TextField(
+                controller: _searchController,
+                textDirection: ui.TextDirection.rtl,
+                onChanged: (value) => search = value,
+                decoration: InputDecoration(
+                  fillColor: AppColors.primaryColor.withOpacity(0.08),
+                  filled: true,
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.r),
+                      borderSide: BorderSide.none
                   ),
-                  style: GoogleFonts.cairo(
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.r),
+                      borderSide: BorderSide.none
+                  ),
+                  hintTextDirection: ui.TextDirection.rtl,
+                  hintText: "البحث",
+                  hintStyle: GoogleFonts.cairo(
                     fontWeight: FontWeight.w400,
                     fontSize: 16.sp,
                     color: AppColors.primaryColor,
                   ),
+                  contentPadding: EdgeInsets.only(
+                      left: ScreenUtilNew.width(8),
+                      right: ScreenUtilNew.width(8)),
+                  border: InputBorder.none,
+                ),
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16.sp,
+                  color: AppColors.primaryColor,
                 ),
               ),
+
+              // Container(
+              //   height: ScreenUtilNew.height(52),
+              //   width: double.infinity,
+              //   decoration: BoxDecoration(
+              //     color: const Color(0XFFEBF7F1),
+              //     borderRadius: BorderRadius.circular(5.r),
+              //   ),
+              //   child: TextField(
+              //     controller: _searchController,
+              //     textDirection: ui.TextDirection.rtl,
+              //     decoration: InputDecoration(
+              //       hintTextDirection: ui.TextDirection.rtl,
+              //       hintText: "البحث",
+              //       hintStyle: GoogleFonts.cairo(
+              //         fontWeight: FontWeight.w400,
+              //         fontSize: 16.sp,
+              //         color: AppColors.primaryColor,
+              //       ),
+              //       contentPadding: EdgeInsets.only(left: 8.0),
+              //       border: InputBorder.none,
+              //     ),
+              //     style: GoogleFonts.cairo(
+              //       fontWeight: FontWeight.w400,
+              //       fontSize: 16.sp,
+              //       color: AppColors.primaryColor,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           actions: [

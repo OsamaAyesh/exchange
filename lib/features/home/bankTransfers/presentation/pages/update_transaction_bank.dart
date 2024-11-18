@@ -357,11 +357,11 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                 styleHintText: GoogleFonts.cairo(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.primaryColor,
+                  color: Colors.black,
                 ),
                 textEditingController: _refNumberController,
                 maxLines: 2,
-                minLines: 1,
+                minLines: 1, keyboardType: TextInputType.number,
               ),
             ),
             SizedBox(
@@ -516,11 +516,11 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                         styleHintText: GoogleFonts.cairo(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor,
+                          color: Colors.black,
                         ),
                         textEditingController: _nameReceiveController,
                         maxLines: 2,
-                        minLines: 1,
+                        minLines: 1, keyboardType: TextInputType.text,
                       ),
                     ],
                   ),
@@ -611,7 +611,7 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                       ),
                       const Icon(
                         Icons.date_range,
-                        color: AppColors.primaryColor,
+                        color: Colors.black,
                       ),
                       const Expanded(child: SizedBox()),
                       Align(
@@ -627,7 +627,7 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                                 style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 16.sp,
-                                  color: AppColors.primaryColor,
+                                  color: Colors.black,
                                 ),
                               );
                             },
@@ -688,7 +688,7 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                           onChanged: (selectedAccount) {
                             _currencyController.text =
                                 selectedAccount!.currency!;
-                          }, selectid: 15,
+                          }, selectid: 15, updated: true,
                         );
                       }
                     },
@@ -726,11 +726,11 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                         styleHintText: GoogleFonts.cairo(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor,
+                          color: Colors.black,
                         ),
                         textEditingController: _amountController,
                         maxLines: 2,
-                        minLines: 1,
+                        minLines: 1, keyboardType: TextInputType.number,
                       ),
                     ],
                   ),
@@ -770,11 +770,11 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                 styleHintText: GoogleFonts.cairo(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.primaryColor,
+                  color: Colors.black,
                 ),
                 textEditingController: _notesController,
                 maxLines: 4,
-                minLines: 3,
+                minLines: 3, keyboardType: TextInputType.text,
               ),
             ),
             SizedBox(
@@ -840,7 +840,7 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                             style: GoogleFonts.cairo(
                               fontWeight: FontWeight.w600,
                               fontSize: 14.sp,
-                              color: AppColors.primaryColor,
+                              color: Colors.black,
                             ),
                           ),
                           SizedBox(
@@ -848,7 +848,7 @@ class _UpdateTransactionBankState extends State<UpdateTransactionBank> {
                           ),
                           const Icon(
                             Icons.file_upload_outlined,
-                            color: AppColors.primaryColor,
+                            color: Colors.black,
                           )
                         ],
                       ),

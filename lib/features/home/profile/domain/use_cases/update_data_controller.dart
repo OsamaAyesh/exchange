@@ -7,7 +7,7 @@
 // import 'package:shared_preferences/shared_preferences.dart';
 //
 // class UpdateProfileController {
-//   String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/update-profile";
+//   String urlApi = "${SettingsProvider.mainDomain}/api/v1/employee-api/update-profile";
 //   final SharedPrefController _sharedPrefController = SharedPrefController(); // إنشاء كائن من SharedPrefController
 //
 //   // جلب التوكن من SharedPreferences
@@ -106,8 +106,10 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
+import '../../../../../core/settings_provider.dart';
+
 class UpdateProfileController {
-  final String urlApi = "https://stage.qudsoffice.com/api/v1/employee-api/update-profile";
+  final String urlApi = "${SettingsProvider.mainDomain}/api/v1/employee-api/update-profile";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   // جلب التوكن من SharedPreferences

@@ -72,14 +72,14 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
   final ImagePicker _picker = ImagePicker();
   bool isLoading = false;
 
-  final _refNumberController = TextEditingController();
-  final _accountIdController = TextEditingController();
-  final _userIdController = TextEditingController();
-  final _nameReceiveController = TextEditingController();
-  final _dateController = TextEditingController();
-  final _amountController = TextEditingController();
-  final _currencyController = TextEditingController();
-  final _notesController = TextEditingController();
+  late TextEditingController _refNumberController ;
+  late TextEditingController _accountIdController ;
+  late TextEditingController _userIdController ;
+  late TextEditingController _nameReceiveController ;
+  late TextEditingController _dateController ;
+  late TextEditingController _amountController ;
+  late TextEditingController _currencyController ;
+  late TextEditingController _notesController ;
 
   final StoreTransferControllerApi _controller = StoreTransferControllerApi();
 
@@ -364,6 +364,14 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
     // TODO: implement initState
     Provider.of<ImagePathProviderController>(context, listen: false)
         .imagePathSet = "";
+    _refNumberController = TextEditingController();
+    _accountIdController = TextEditingController();
+    _userIdController = TextEditingController();
+    _nameReceiveController = TextEditingController();
+    _dateController = TextEditingController();
+    _amountController = TextEditingController();
+    _currencyController = TextEditingController();
+    _notesController = TextEditingController();
     super.initState();
   }
 
@@ -496,11 +504,11 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                 styleHintText: GoogleFonts.cairo(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.primaryColor,
+                  color: Colors.black,
                 ),
                 textEditingController: _refNumberController,
                 maxLines: 2,
-                minLines: 1,
+                minLines: 1, keyboardType: TextInputType.number,
               ),
             ),
             SizedBox(
@@ -533,7 +541,9 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                     ),
                   );
                 } else {
-                  List<AccountModel> options = snapshot.data!;
+                  List<AccountModel> options=[AccountModel(id: 0, name: "اختر المحول...", status: 1)];
+                  options.addAll(snapshot.data!);
+                  // List<AccountModel> options = snapshot.data!;
                   return Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: ScreenUtilNew.width(16)),
@@ -543,7 +553,11 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                       textTitle: AppStrings.addNewTransication4,
                       selectedValueString: '',
                       onChanged: (selectedAccount) {
-                        _accountIdController.text = "${selectedAccount!.id}";
+                        if(selectedAccount!.id!=0){
+                          _accountIdController.text = "${selectedAccount!.id}";
+                        }else{
+                          _accountIdController=TextEditingController();
+                        }
                       },
                     ),
                   );
@@ -586,11 +600,11 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                         styleHintText: GoogleFonts.cairo(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor,
+                          color: Colors.black,
                         ),
                         textEditingController: _nameReceiveController,
                         maxLines: 2,
-                        minLines: 1,
+                        minLines: 1, keyboardType: TextInputType.text,
                       ),
                     ],
                   ),
@@ -619,14 +633,20 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                           width: ScreenUtilNew.width(160),
                         );
                       } else {
-                        List<BeneficiarieModel> options = snapshot.data!;
+                        List<BeneficiarieModel> options=[BeneficiarieModel(id: 0, name: "لصالح من...")];
+                        options.addAll(snapshot.data!);
+                        // List<BeneficiarieModel> options = snapshot.data!;
                         return DropDownWidgetTextFieldBeneficiarie(
                           width: ScreenUtilNew.width(160),
                           options: options,
                           textTitle: AppStrings.addNewTransication7,
                           selectedValueString: '',
                           onChanged: (selectedAccount) {
-                            _userIdController.text = "${selectedAccount!.id}";
+                            if(selectedAccount!.id!=0){
+                              _userIdController.text = "${selectedAccount!.id}";
+                            }else{
+                              _userIdController=TextEditingController();
+                            }
                           },
                           defaultValueId: 0,
                         );
@@ -676,7 +696,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                       ),
                       const Icon(
                         Icons.date_range,
-                        color: AppColors.primaryColor,
+                        color: Colors.black,
                       ),
                       const Expanded(child: SizedBox()),
                       Align(
@@ -692,7 +712,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                                 style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 16.sp,
-                                  color: AppColors.primaryColor,
+                                  color: Colors.black,
                                 ),
                               );
                             },
@@ -726,17 +746,24 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                         // إذا لم توجد بيانات
                         return Text("لا يوجد بيانات");
                       } else {
-                        List<CurrencyModel> options = snapshot.data!;
+                        List<CurrencyModel> options=[CurrencyModel(id: 0, name: "اختر العملة")];
+                        options.addAll(snapshot.data!);
+                        // List<CurrencyModel> options = snapshot.data!;
                         return DropDownWidgetTextFieldCurrency(
                             width: ScreenUtilNew.width(160),
                             options: options,
                             textTitle: AppStrings.addNewTransication13,
                             selectedValueString: '',
                             onChanged: (selectedAccount) {
-                              _currencyController.text =
-                                  selectedAccount!.currency!;
+                              if(selectedAccount!.id!=0){
+                                _currencyController.text =
+                                selectedAccount.currency!;
+                              }else{
+                                _currencyController=TextEditingController();
+                              }
                               print(_currencyController);
-                            }, selectid: 1,);
+                            }, selectid: 0,
+                        updated: false,);
                       }
                     },
                   ),
@@ -768,11 +795,11 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                         styleHintText: GoogleFonts.cairo(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor,
+                          color: Colors.black,
                         ),
                         textEditingController: _amountController,
                         maxLines: 2,
-                        minLines: 1,
+                        minLines: 1, keyboardType: TextInputType.number,
                       ),
                     ],
                   ),
@@ -812,11 +839,11 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                 styleHintText: GoogleFonts.cairo(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.primaryColor,
+                  color: Colors.black,
                 ),
                 textEditingController: _notesController,
                 maxLines: 4,
-                minLines: 3,
+                minLines: 3, keyboardType: TextInputType.text,
               ),
             ),
             SizedBox(
@@ -886,7 +913,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                             style: GoogleFonts.cairo(
                               fontWeight: FontWeight.w600,
                               fontSize: 14.sp,
-                              color: AppColors.primaryColor,
+                              color: Colors.black,
                             ),
                           ),
                           SizedBox(
@@ -894,7 +921,7 @@ class _AddTransactionNewScreenState extends State<AddTransactionNewScreen> {
                           ),
                           const Icon(
                             Icons.file_upload_outlined,
-                            color: AppColors.primaryColor,
+                            color: Colors.black,
                           )
                         ],
                       ),

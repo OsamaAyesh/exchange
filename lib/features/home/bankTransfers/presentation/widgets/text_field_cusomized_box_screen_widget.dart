@@ -18,6 +18,7 @@ class TextFieldCusomizedBoxScreenWidget extends StatelessWidget {
   bool enabled;
   Color filledColor;
   TextStyle styleHintText;
+  TextInputType keyboardType;
 
 
   TextFieldCusomizedBoxScreenWidget(
@@ -31,7 +32,8 @@ class TextFieldCusomizedBoxScreenWidget extends StatelessWidget {
       required this.maxLines,
       required this.enabled,
       required this.filledColor,
-      required this.styleHintText});
+      required this.styleHintText,
+      required this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +43,13 @@ class TextFieldCusomizedBoxScreenWidget extends StatelessWidget {
         width: width,
         // height: ScreenUtilNew.height(52),
         child: TextField(
+          keyboardType:keyboardType ,
           enabled: enabled,
           controller: textEditingController,
           style:  GoogleFonts.cairo(
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
-              color: AppColors.primaryColor),
+              color: Colors.black),
           textAlign: TextAlign.right,
           maxLines: maxLines,
           minLines: minLines,

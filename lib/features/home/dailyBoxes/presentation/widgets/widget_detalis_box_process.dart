@@ -79,7 +79,7 @@ class WidgetDetailsBoxProcess extends StatelessWidget {
                             top: ScreenUtilNew.height(8)),
                         child: ColumnDataWidgetProcessDetails(
                           title: AppStrings.detailsScreen4,
-                          subTitle: commission, maxLines: 1,
+                          subTitle: "$commission %", maxLines: 1,
                         ),
                       ),
                       Padding(

@@ -5,6 +5,8 @@ import 'package:exchange/core/utils/screen_util_new.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/sevices/shared_pref_controller.dart';
+import '../../domain/use_cases/mantinance_service.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -25,26 +27,39 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _checkMaintenanceStatus();
+  }
+
+  Future<void> _checkMaintenanceStatus() async {
+    bool isUnderMaintenance =
+        await MaintenanceService().isWebsiteUnderMaintenance();
     Future.delayed(const Duration(seconds: 3), () {
-      bool loggedIn =
-          SharedPrefController().getValue<bool>(PrefKeys.loggedIn.name) ??
-              false;
-      String route =Routes.loginScreen;
-      // String route = loggedIn ? Routes.homeScreen : Routes.loginScreen;
+      String route;
+      if (isUnderMaintenance) {
+        route = Routes.maintenanceScreen;
+      } else {
+        route = Routes.loginScreen;
+      }
       Navigator.pushReplacementNamed(context, route);
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
           GestureDetector(
-            onTap: (){
-              // Navigator.pushNamed(context, Routes.loginScreen);
-            },
-              child: Center(child: Image.asset(AssetsManger.logoApp,height: ScreenUtilNew.height(132),width: ScreenUtilNew.width(216),))),
+              onTap: () {
+                // Navigator.pushNamed(context, Routes.loginScreen);
+              },
+              child: Center(
+                  child: Image.asset(
+                AssetsManger.logoApp,
+                height: ScreenUtilNew.height(132),
+                width: ScreenUtilNew.width(216),
+              ))),
           Padding(
             padding: EdgeInsets.only(top: ScreenUtilNew.height(500)),
             child: const Align(

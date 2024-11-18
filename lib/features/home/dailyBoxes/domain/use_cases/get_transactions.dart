@@ -5,7 +5,7 @@
 // import '../../data/models/get_transaction_by_id_box.dart';
 //
 // class GetTransactions {
-//   String apiUrl = "https://stage.qudsoffice.com/api/v1/employee-api/daily-fund-transaction";
+//   String apiUrl = "${SettingsProvider.mainDomain}/api/v1/employee-api/daily-fund-transaction";
 //   final SharedPrefController _sharedPrefController = SharedPrefController();
 //
 //   Future<String?> _getToken() async {
@@ -56,11 +56,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../../../core/settings_provider.dart';
 import '../../../../../core/sevices/shared_pref_controller.dart';
 import '../../data/models/get_transaction_by_id_box.dart';
 
 class GetTransactions {
-  final String apiUrl = "https://stage.qudsoffice.com/api/v1/employee-api/daily-fund-transaction";
+  final String apiUrl = "${SettingsProvider.mainDomain}/api/v1/employee-api/daily-fund-transaction";
   final SharedPrefController _sharedPrefController = SharedPrefController();
 
   Future<String?> _getToken() async {

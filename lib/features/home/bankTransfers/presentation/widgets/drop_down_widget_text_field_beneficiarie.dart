@@ -74,7 +74,7 @@ class _DropDownWidgetTextFieldBeneficiarieState extends State<DropDownWidgetText
                 isExpanded: true,
                 value: selectedAccount,
                 icon: const Icon(Icons.keyboard_arrow_down,
-                    color: AppColors.primaryColor, size: 24),
+                    color: Colors.black, size: 24),
                 dropdownColor: Colors.white,
                 onChanged: (BeneficiarieModel? newValue) {
                   if (newValue != null) {
@@ -93,7 +93,7 @@ class _DropDownWidgetTextFieldBeneficiarieState extends State<DropDownWidgetText
                       style: GoogleFonts.cairo(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryColor),
+                          color: Colors.black),
                     ),
                   );
                 }).toList(),
